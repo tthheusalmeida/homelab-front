@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import { Bot, Home } from "lucide-react";
 
 import { useLocation, useNavigate } from "react-router";
 
@@ -18,6 +18,11 @@ const items = [
     title: "Home",
     url: "/",
     icon: Home,
+  },
+  {
+    title: "AI Usage",
+    url: "/ai-usage",
+    icon: Bot,
   },
 ];
 
