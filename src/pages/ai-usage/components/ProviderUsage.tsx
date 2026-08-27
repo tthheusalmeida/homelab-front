@@ -12,7 +12,7 @@ export function ProviderUsage({ data }: ProviderUsageProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Usage by provider</CardTitle>
+        <CardTitle>Uso por provedor</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-5">

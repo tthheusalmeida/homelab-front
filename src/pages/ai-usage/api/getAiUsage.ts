@@ -21,5 +21,5 @@ export async function getAiUsage(
 
   const query = searchParams.toString();
 
-  return api<AiUsageResponse>(`/api/ai/usage${query ? `?${query}` : ""}`);
+  return api<AiUsageResponse>(`/ai/usage${query ? `?${query}` : ""}`);
 }

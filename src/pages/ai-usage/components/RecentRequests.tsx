@@ -18,7 +18,7 @@ export function RecentRequests({ data }: RecentRequestsProps) {
   return (
     <div className="rounded-xl border bg-card">
       <div className="border-b px-6 py-4">
-        <h2 className="font-semibold">Recent requests</h2>
+        <h2 className="font-semibold">Requests recentes</h2>
       </div>
 
       <Table>

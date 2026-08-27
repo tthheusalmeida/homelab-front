@@ -32,12 +32,12 @@ export function UsageSummary({ data }: UsageSummaryProps) {
       icon: Database,
     },
     {
-      title: "Estimated cost",
+      title: "Custo estimado",
       value: `$${data.estimatedCost.toFixed(2)}`,
       icon: Coins,
     },
     {
-      title: "Avg. latency",
+      title: "Latencia média",
       value: `${data.averageLatencyMs}ms`,
       icon: Clock3,
     },

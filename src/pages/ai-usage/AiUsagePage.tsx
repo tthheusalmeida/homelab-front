@@ -49,7 +49,7 @@ export function AiUsagePage() {
           <h1 className="text-2xl font-semibold tracking-tight">AI Usage</h1>
 
           <p className="text-sm text-muted-foreground">
-            Monitor AI consumption, costs and performance.
+            Monitora o consumo de AI, custo e performance.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export function AiUsagePage() {
             size="sm"
             onClick={() => setProvider(undefined)}
           >
-            All
+            Todos
           </Button>
 
           <Button

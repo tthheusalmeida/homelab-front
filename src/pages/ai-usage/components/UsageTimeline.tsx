@@ -10,7 +10,7 @@ export function UsageTimeline({ data }: UsageTimelineProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Token consumption</CardTitle>
+        <CardTitle>Consumo de token</CardTitle>
       </CardHeader>
 
       <CardContent>

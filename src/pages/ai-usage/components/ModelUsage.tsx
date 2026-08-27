@@ -10,7 +10,7 @@ export function ModelUsage({ data }: ModelUsageProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Usage by model</CardTitle>
+        <CardTitle>Uso por modelo</CardTitle>
       </CardHeader>
 
       <CardContent>
