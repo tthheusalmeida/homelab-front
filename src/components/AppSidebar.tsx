@@ -29,7 +29,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Aplicação</SidebarGroupLabel>
+          <SidebarGroupLabel>HomeLab</SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
