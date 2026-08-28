@@ -11,6 +11,8 @@ import { UsageTimeline } from "./components/UsageTimeline";
 import { ProviderUsage } from "./components/ProviderUsage";
 import { ModelUsage } from "./components/ModelUsage";
 import { RecentRequests } from "./components/RecentRequests";
+import { LoadingState } from "../../components/LoadingState";
+import { ErrorState } from "../../components/ErrorState";
 
 export function AiUsagePage() {
   const [provider, setProvider] = useState<string>();
@@ -21,10 +23,8 @@ export function AiUsagePage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-100 items-center justify-center">
-        <span className="text-sm text-muted-foreground">
-          Loading AI usage...
-        </span>
+      <div className="flex min-h-[80dvh] items-center justify-center">
+        <LoadingState />
       </div>
     );
   }
@@ -33,9 +33,10 @@ export function AiUsagePage() {
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <p className="font-medium">Failed to load AI usage</p>
-
-          <p className="mt-1 text-sm text-muted-foreground">Try again later.</p>
+          <ErrorState
+            primaryMessage="Oops! houve falha ao carregar o uso de AI"
+            secondaryMessage="Tente novamente mais tarde."
+          />
         </CardContent>
       </Card>
     );
@@ -46,7 +47,7 @@ export function AiUsagePage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">AI Usage</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Uso de AI</h1>
 
           <p className="text-sm text-muted-foreground">
             Monitora o consumo de AI, custo e performance.
