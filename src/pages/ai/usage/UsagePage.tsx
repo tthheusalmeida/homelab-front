@@ -34,7 +34,7 @@ export function UsagePage() {
       <Card>
         <CardContent className="py-10 text-center">
           <ErrorState
-            primaryMessage="Oops! houve falha ao carregar o uso de AI"
+            primaryMessage="Oops! houve falha ao carregar o uso de IA"
             secondaryMessage="Tente novamente mais tarde."
           />
         </CardContent>
@@ -43,11 +43,11 @@ export function UsagePage() {
   }
 
   return (
-    <main className="space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Uso de AI</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Uso de IA</h1>
 
           <p className="text-sm text-muted-foreground">
             Monitora o consumo de AI, custo e performance.
@@ -108,6 +108,6 @@ export function UsagePage() {
 
       {/* Requests */}
       <RecentRequests data={data.recentRequests} />
-    </main>
+    </div>
   );
 }

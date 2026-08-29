@@ -125,7 +125,7 @@ export function ChatPage() {
     !isSending;
 
   return (
-    <div className="flex max-h-[90dvh] flex-1 flex-col">
+    <div className="flex flex-1 flex-col min-h-[90dvh]">
       {messages.length > 0 || chatStatus !== "idle" ? (
         <ChatMessageList messages={messages} status={chatStatus} />
       ) : (
