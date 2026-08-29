@@ -1,4 +1,4 @@
-import { Bot, Home, MessageSquare } from "lucide-react";
+import { Gauge, Home, MessageSquare } from "lucide-react";
 
 import { useLocation, useNavigate } from "react-router";
 
@@ -33,9 +33,9 @@ const navigation = [
         icon: MessageSquare,
       },
       {
-        title: "Usage",
+        title: "Uso",
         url: "ai/usage",
-        icon: Bot,
+        icon: Gauge,
       },
     ],
   },
