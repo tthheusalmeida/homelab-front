@@ -1,4 +1,4 @@
-import { Bot, Home } from "lucide-react";
+import { Bot, Home, MessageSquare } from "lucide-react";
 
 import { useLocation, useNavigate } from "react-router";
 
@@ -13,16 +13,31 @@ import {
   SidebarMenuItem,
 } from "#ui/sidebar";
 
-const items = [
+const navigation = [
   {
-    title: "Home",
-    url: "/",
-    icon: Home,
+    label: "HomeLab",
+    items: [
+      {
+        title: "Home",
+        url: "/",
+        icon: Home,
+      },
+    ],
   },
   {
-    title: "AI Usage",
-    url: "/ai-usage",
-    icon: Bot,
+    label: "AI",
+    items: [
+      {
+        title: "Chat",
+        url: "ai/chat",
+        icon: MessageSquare,
+      },
+      {
+        title: "Usage",
+        url: "ai/usage",
+        icon: Bot,
+      },
+    ],
   },
 ];
 
@@ -33,29 +48,31 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>HomeLab</SidebarGroupLabel>
+        {navigation.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
 
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const isActive = location.pathname === item.url;
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => {
+                  const isActive = location.pathname === item.url;
 
-                return (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      onClick={() => navigate(item.url)}
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                  return (
+                    <SidebarMenuItem key={item.url}>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        onClick={() => navigate(item.url)}
+                      >
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
     </Sidebar>
   );

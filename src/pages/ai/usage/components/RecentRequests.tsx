@@ -5,9 +5,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../ui/table";
+} from "../../../../ui/table";
 
-import { Badge } from "../../../ui/badge";
+import { Badge } from "../../../../ui/badge";
 import type { AiUsageRequest } from "../types/aiUsage.types";
 
 interface RecentRequestsProps {

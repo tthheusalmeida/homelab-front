@@ -3,18 +3,18 @@ import { CalendarDays } from "lucide-react";
 
 import { useAiUsage } from "./hooks/useAiUsage";
 
-import { Button } from "../../ui/button";
-import { Card, CardContent } from "../../ui/card";
+import { Button } from "../../../ui/button";
+import { Card, CardContent } from "../../../ui/card";
 
 import { UsageSummary } from "./components/UsageSummary";
 import { UsageTimeline } from "./components/UsageTimeline";
 import { ProviderUsage } from "./components/ProviderUsage";
 import { ModelUsage } from "./components/ModelUsage";
 import { RecentRequests } from "./components/RecentRequests";
-import { LoadingState } from "../../components/LoadingState";
-import { ErrorState } from "../../components/ErrorState";
+import { LoadingState } from "../../../components/LoadingState";
+import { ErrorState } from "../../../components/ErrorState";
 
-export function AiUsagePage() {
+export function UsagePage() {
   const [provider, setProvider] = useState<string>();
 
   const { data, isLoading, isError } = useAiUsage({

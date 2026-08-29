@@ -1,5 +1,5 @@
 import { Activity, Clock3, Coins, Database } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../../ui/card";
 
 import type { AiUsageSummary as UsageSummaryData } from "../types/aiUsage.types";
 

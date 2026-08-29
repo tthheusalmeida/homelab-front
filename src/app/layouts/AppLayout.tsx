@@ -16,9 +16,9 @@ export function AppLayout() {
           <ClockAndTime />
         </header>
 
-        <div className="flex-1 p-6">
+        <main className="flex min-w-0 flex-1 flex-col p-4">
           <Outlet />
-        </div>
+        </main>
       </main>
     </SidebarProvider>
   );
