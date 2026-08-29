@@ -1,6 +1,7 @@
 import { Bot, User } from "lucide-react";
 
 import type { AiMessage } from "../types/chat";
+import { MarkdownMessage } from "#components/MarkdownMessage";
 
 interface ChatMessageProps {
   message: AiMessage;
@@ -22,7 +23,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
           isUser ? "bg-primary text-primary-foreground" : "bg-muted"
         }`}
       >
-        {message.content}
+        {isUser ? (
+          message.content
+        ) : (
+          <MarkdownMessage content={message.content} />
+        )}
       </div>
 
       {isUser && (
