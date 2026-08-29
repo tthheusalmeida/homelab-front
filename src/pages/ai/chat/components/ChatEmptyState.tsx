@@ -75,9 +75,11 @@ export function ChatEmptyState() {
       </div>
 
       <div className="max-w-sm space-y-1">
-        <h2 className="text-lg tracking-tight">Como posso te ajudar hoje?</h2>
+        <h2 className="text-lg font-medium tracking-tight">
+          Como posso te ajudar hoje?
+        </h2>
 
-        <div className="h-6 text-sm text-muted-foreground">
+        <div className="h-6 text-muted-foreground font-mono text-xs">
           <span>{phrase}</span>
           <span className="ml-0.5 animate-pulse">|</span>
         </div>
