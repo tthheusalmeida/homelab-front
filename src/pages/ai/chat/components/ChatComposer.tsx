@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from "react";
 
-import { Send } from "lucide-react";
+import { LoaderCircle, Send, Square } from "lucide-react";
 
 import { Button } from "#ui/button";
 import { Textarea } from "#ui/textarea";
@@ -10,6 +10,7 @@ interface ChatComposerProps {
   onChange: (value: string) => void;
   onSend: () => void;
   disabled?: boolean;
+  isSending?: boolean;
   settings: React.ReactNode;
 }
 
@@ -18,6 +19,7 @@ export function ChatComposer({
   onChange,
   onSend,
   disabled,
+  isSending,
   settings,
 }: ChatComposerProps) {
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -27,7 +29,7 @@ export function ChatComposer({
 
     event.preventDefault();
 
-    if (!disabled) {
+    if (!isSending && !disabled) {
       onSend();
     }
   }
@@ -50,7 +52,11 @@ export function ChatComposer({
             disabled={disabled}
             onClick={onSend}
           >
-            <Send className="size-4" />
+            {isSending ? (
+              <Square className="size-4 fill-current" />
+            ) : (
+              <Send className="size-4" />
+            )}
           </Button>
         </div>
 

@@ -30,3 +30,5 @@ export interface AiChatRequest {
 export interface AiChatRequestMessage {
   message: string;
 }
+
+export type ChatStatus = "idle" | "sending" | "cancelled";

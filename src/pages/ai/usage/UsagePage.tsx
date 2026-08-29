@@ -24,7 +24,7 @@ export function UsagePage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[80dvh] items-center justify-center">
-        <LoadingState />
+        <LoadingState message="Carregando" />
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { AiMessage } from "./types/chat";
+import type { AiMessage, ChatStatus } from "./types/chat";
 
 import { useAiModels } from "./hooks/useAiModels";
 import { useAiProviders } from "./hooks/useAiProviders";
@@ -13,6 +13,8 @@ import { ChatComposer } from "./components/ChatComposer";
 import { ChatSettings } from "./components/ChatSettings";
 
 export function ChatPage() {
+  const [chatStatus, setChatStatus] = useState<ChatStatus>("idle");
+
   const [providerId, setProviderId] = useState<string | undefined>(undefined);
   const [modelId, setModelId] = useState<string | undefined>(undefined);
   const [thinkingId, setThinkingId] = useState<string | undefined>(undefined);
@@ -53,10 +55,12 @@ export function ChatPage() {
   async function handleSend() {
     if (isSending) {
       abort();
+      setChatStatus("cancelled");
       return;
     }
 
     const content = message.trim();
+
     if (!content) {
       return;
     }
@@ -67,9 +71,15 @@ export function ChatPage() {
 
     setMessages((current) => [
       ...current,
-      { id: crypto.randomUUID(), role: "user", content },
+      {
+        id: crypto.randomUUID(),
+        role: "user",
+        content,
+      },
     ]);
+
     setMessage("");
+    setChatStatus("sending");
 
     try {
       const response = await sendMessage({
@@ -87,11 +97,17 @@ export function ChatPage() {
           content: response.message,
         },
       ]);
+
+      setChatStatus("idle");
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
+        setChatStatus("cancelled");
         return;
       }
-      console.error("Failed to send AI message:", error);
+
+      setChatStatus("idle");
+
+      console.error("Falha ao enviar mensagem para AI:", error);
     }
   }
 
@@ -105,12 +121,13 @@ export function ChatPage() {
     Boolean(activeProviderId) &&
     Boolean(activeModelId) &&
     Boolean(activeThinkingId) &&
-    !isLoading;
+    !isLoading &&
+    !isSending;
 
   return (
     <div className="flex max-h-[90dvh] flex-1 flex-col">
-      {messages.length ? (
-        <ChatMessageList messages={messages} />
+      {messages.length > 0 || chatStatus !== "idle" ? (
+        <ChatMessageList messages={messages} status={chatStatus} />
       ) : (
         <ChatEmptyState />
       )}
@@ -119,7 +136,8 @@ export function ChatPage() {
         value={message}
         onChange={setMessage}
         onSend={handleSend}
-        disabled={!canSend}
+        disabled={!canSend && !isSending}
+        isSending={isSending}
         settings={
           <ChatSettings
             providers={providersQuery.data ?? []}
