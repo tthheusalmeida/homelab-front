@@ -5,6 +5,7 @@ import { AppLayout } from "./layouts/AppLayout";
 import { HomePage } from "../pages/home/HomePage";
 import { ChatPage } from "../pages/ai/chat/ChatPage";
 import { UsagePage } from "../pages/ai/usage/UsagePage";
+import { TrackPage } from "../pages/jobs/track/TrackPage";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,15 @@ export const router = createBrowserRouter([
           {
             path: "usage",
             element: <UsagePage />,
+          },
+        ],
+      },
+      {
+        path: "jobs",
+        children: [
+          {
+            path: "track",
+            element: <TrackPage />,
           },
         ],
       },

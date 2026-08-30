@@ -1,4 +1,11 @@
-import { Gauge, Home, MessageSquare } from "lucide-react";
+import {
+  Gauge,
+  Home,
+  Kanban,
+  MessageSquare,
+  StepForward,
+  Workflow,
+} from "lucide-react";
 
 import { useLocation, useNavigate } from "react-router";
 
@@ -36,6 +43,16 @@ const navigation = [
         title: "Uso",
         url: "ai/usage",
         icon: Gauge,
+      },
+    ],
+  },
+  {
+    label: "Jobs",
+    items: [
+      {
+        title: "Inspeção",
+        url: "jobs/track",
+        icon: StepForward,
       },
     ],
   },
