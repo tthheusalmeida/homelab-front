@@ -62,6 +62,7 @@ export function AppSidebar() {
                       <SidebarMenuButton
                         isActive={isActive}
                         onClick={() => navigate(item.url)}
+                        className="select-none"
                       >
                         <item.icon />
                         <span>{item.title}</span>
