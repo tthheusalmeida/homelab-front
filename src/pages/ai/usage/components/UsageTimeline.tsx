@@ -1,3 +1,14 @@
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ChartContainer,
+  ChartTooltipContent,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "../../../../ui/chart";
+
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../ui/card";
 
 import type { AiUsageTimeline } from "../types/aiUsage.types";
@@ -6,9 +17,15 @@ interface UsageTimelineProps {
   data: AiUsageTimeline[];
 }
 
+const chartConfig = {
+  totalTokens: {
+    label: "Tokens",
+    color: "var(--chart-1)",
+  },
+};
+
 function getLastSevenDays() {
   const days: string[] = [];
-
   const today = new Date();
 
   for (let i = 6; i >= 0; i--) {
@@ -28,6 +45,14 @@ function getLastSevenDays() {
   return days;
 }
 
+function formatDate(date: string) {
+  return new Date(`${date}T00:00:00`).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
 export function UsageTimeline({ data }: UsageTimelineProps) {
   const lastSevenDays = getLastSevenDays();
 
@@ -44,7 +69,7 @@ export function UsageTimeline({ data }: UsageTimelineProps) {
     );
   });
 
-  const maxTokens = Math.max(...timeline.map((item) => item.totalTokens), 0);
+  console.log(data);
 
   return (
     <Card>
@@ -53,37 +78,52 @@ export function UsageTimeline({ data }: UsageTimelineProps) {
       </CardHeader>
 
       <CardContent>
-        <div className="flex h-72 items-end gap-2">
-          {timeline.map((item) => {
-            const height =
-              maxTokens > 0 ? (item.totalTokens / maxTokens) * 100 : 0;
+        <ChartContainer config={chartConfig} className="h-72 w-full">
+          <BarChart
+            data={timeline}
+            margin={{
+              top: 8,
+              right: 8,
+              left: 8,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
 
-            return (
-              <div
-                key={item.date}
-                className="flex h-full flex-1 flex-col items-center justify-end gap-2"
-              >
-                <div className="flex w-full flex-1 items-end">
-                  <div
-                    className="w-full rounded-sm bg-primary/80 transition-all"
-                    style={{ height: `${height}%` }}
-                    title={`${item.totalTokens.toLocaleString()} tokens`}
-                  />
-                </div>
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={formatDate}
+            />
 
-                <span className="text-[10px] text-muted-foreground">
-                  {new Date(`${item.date}T00:00:00`).toLocaleDateString(
-                    "pt-BR",
-                    {
-                      day: "2-digit",
-                      month: "2-digit",
-                    },
-                  )}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              width={45}
+              tickFormatter={(value) => value.toLocaleString("pt-BR")}
+            />
+
+            <Tooltip
+              cursor={{
+                fill: "var(--muted)",
+                opacity: 0.3,
+              }}
+              content={
+                <ChartTooltipContent
+                  labelFormatter={(value) => formatDate(value as string)}
+                />
+              }
+            />
+
+            <Bar
+              dataKey="totalTokens"
+              radius={[4, 4, 0, 0]}
+              fill="var(--chart-1)"
+            />
+          </BarChart>
+        </ChartContainer>
       </CardContent>
     </Card>
   );

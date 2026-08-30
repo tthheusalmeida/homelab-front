@@ -50,7 +50,14 @@ export function RecentRequests({ data }: RecentRequestsProps) {
               <TableCell>${request.estimatedCost.toFixed(4)}</TableCell>
 
               <TableCell>
-                <Badge variant={request.success ? "secondary" : "destructive"}>
+                <Badge
+                  variant={request.success ? "secondary" : "destructive"}
+                  className={
+                    request.success
+                      ? "bg-emerald-300 dark:bg-emerald-700 text-secondary dark:text-primary"
+                      : "bg-red-300 dark:bg-red-700 text-secondary dark:text-primary"
+                  }
+                >
                   {request.success ? "Success" : "Failed"}
                 </Badge>
               </TableCell>
