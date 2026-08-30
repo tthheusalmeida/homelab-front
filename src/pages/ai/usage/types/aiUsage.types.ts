@@ -1,20 +1,20 @@
+import type { AIProviderName } from "./ai.types";
+
 export interface AiUsageParams {
-  from?: string;
-  to?: string;
   provider?: string;
 }
 
 export interface AiUsageSummary {
   totalRequests: number;
-  totalInputTokens: number;
-  totalOutputTokens: number;
+  inputTokens: number;
+  outputTokens: number;
   totalTokens: number;
   estimatedCost: number;
   averageLatencyMs: number;
 }
 
 export interface AiProviderUsage {
-  provider: string;
+  provider: AIProviderName;
   requests: number;
   inputTokens: number;
   outputTokens: number;
@@ -24,7 +24,7 @@ export interface AiProviderUsage {
 }
 
 export interface AiModelUsage {
-  provider: string;
+  provider: AIProviderName;
   model: string;
   requests: number;
   inputTokens: number;
@@ -37,13 +37,15 @@ export interface AiModelUsage {
 export interface AiUsageTimeline {
   date: string;
   requests: number;
-  tokens: number;
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
   estimatedCost: number;
 }
 
 export interface AiUsageRequest {
   id: string;
-  provider: string;
+  provider: AIProviderName;
   model: string;
   operation: string;
   inputTokens: number;

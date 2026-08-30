@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { CalendarDays } from "lucide-react";
 
 import { useAiUsage } from "./hooks/useAiUsage";
+import type { AIProviderName } from "./types/ai.types";
 
 import { Button } from "../../../ui/button";
 import { Card, CardContent } from "../../../ui/card";
@@ -15,7 +15,7 @@ import { LoadingState } from "../../../components/LoadingState";
 import { ErrorState } from "../../../components/ErrorState";
 
 export function UsagePage() {
-  const [provider, setProvider] = useState<string>();
+  const [provider, setProvider] = useState<AIProviderName>();
 
   const { data, isLoading, isError } = useAiUsage({
     provider,
@@ -77,18 +77,6 @@ export function UsagePage() {
             onClick={() => setProvider("gemini")}
           >
             Gemini
-          </Button>
-
-          <Button
-            variant={provider === "groq" ? "secondary" : "outline"}
-            size="sm"
-            onClick={() => setProvider("groq")}
-          >
-            Groq
-          </Button>
-
-          <Button variant="outline" size="icon">
-            <CalendarDays className="size-4" />
           </Button>
         </div>
       </div>

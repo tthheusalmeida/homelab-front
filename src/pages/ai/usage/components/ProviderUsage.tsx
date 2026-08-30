@@ -16,37 +16,43 @@ export function ProviderUsage({ data }: ProviderUsageProps) {
       </CardHeader>
 
       <CardContent className="space-y-5">
-        {data.map((provider) => {
-          const percentage =
-            total > 0 ? (provider.totalTokens / total) * 100 : 0;
+        {data.length === 0 ? (
+          <div className="py-8 text-center text-sm text-muted-foreground">
+            Nenhum consumo registrado.
+          </div>
+        ) : (
+          data.map((provider) => {
+            const percentage =
+              total > 0 ? (provider.totalTokens / total) * 100 : 0;
 
-          return (
-            <div key={provider.provider} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-medium capitalize">
-                  {provider.provider}
-                </span>
+            return (
+              <div key={provider.provider} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium capitalize">
+                    {provider.provider}
+                  </span>
 
-                <span className="text-sm text-muted-foreground">
-                  {percentage.toFixed(1)}%
-                </span>
+                  <span className="text-sm text-muted-foreground">
+                    {percentage.toFixed(1)}%
+                  </span>
+                </div>
+
+                <div className="h-2 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${percentage}%` }}
+                  />
+                </div>
+
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>{provider.requests.toLocaleString()} requests</span>
+
+                  <span>{provider.totalTokens.toLocaleString()} tokens</span>
+                </div>
               </div>
-
-              <div className="h-2 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${percentage}%` }}
-                />
-              </div>
-
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{provider.requests.toLocaleString()} requests</span>
-
-                <span>{provider.totalTokens.toLocaleString()} tokens</span>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </CardContent>
     </Card>
   );
