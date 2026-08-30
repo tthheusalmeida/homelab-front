@@ -18,7 +18,7 @@ const navigation = [
     label: "HomeLab",
     items: [
       {
-        title: "Home",
+        title: "Início",
         url: "/",
         icon: Home,
       },
