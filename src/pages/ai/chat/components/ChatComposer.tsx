@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from "react";
 
-import { LoaderCircle, Send, Square } from "lucide-react";
+import { Pause, Send } from "lucide-react";
 
 import { Button } from "#ui/button";
 import { Textarea } from "#ui/textarea";
@@ -48,14 +48,14 @@ export function ChatComposer({
 
           <Button
             size="icon"
-            className="absolute right-3 bottom-3"
+            className="absolute right-3 bottom-3 rounded-full"
             disabled={disabled}
             onClick={onSend}
           >
             {isSending ? (
-              <Square className="size-4 fill-current" />
+              <Pause className="size-4 fill-current" />
             ) : (
-              <Send className="size-4" />
+              <Send className="size-4 top-2" />
             )}
           </Button>
         </div>
