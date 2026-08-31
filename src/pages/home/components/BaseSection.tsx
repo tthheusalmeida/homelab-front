@@ -18,7 +18,7 @@ export function HomeBaseSection({
       <div className="mb-4 flex items-end justify-between select-none">
         <div>
           <h2 className="text-lg font-medium tracking-tight">{title}</h2>
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
+          <p className="text-muted-foreground text-xs">{subtitle}</p>
         </div>
 
         {titleMono && (
