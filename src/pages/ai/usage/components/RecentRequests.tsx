@@ -9,6 +9,7 @@ import {
 
 import { Badge } from "../../../../ui/badge";
 import type { AiUsageRequest } from "../types/aiUsage.types";
+import { formatDuration, formatNumber } from "#lib/format";
 
 interface RecentRequestsProps {
   data: AiUsageRequest[];
@@ -43,9 +44,9 @@ export function RecentRequests({ data }: RecentRequestsProps) {
 
               <TableCell>{request.operation}</TableCell>
 
-              <TableCell>{request.totalTokens.toLocaleString()}</TableCell>
+              <TableCell>{formatNumber(request.totalTokens)}</TableCell>
 
-              <TableCell>{request.latencyMs}ms</TableCell>
+              <TableCell>{formatDuration(request.latencyMs)}</TableCell>
 
               <TableCell>${request.estimatedCost.toFixed(4)}</TableCell>
 

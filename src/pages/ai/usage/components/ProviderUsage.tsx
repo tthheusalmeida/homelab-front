@@ -1,3 +1,4 @@
+import { formatNumber } from "#lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../ui/card";
 
 import type { AiProviderUsage } from "../types/aiUsage.types";
@@ -45,9 +46,9 @@ export function ProviderUsage({ data }: ProviderUsageProps) {
                 </div>
 
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{provider.requests.toLocaleString()} requests</span>
+                  <span>{formatNumber(provider.requests)} requests</span>
 
-                  <span>{provider.totalTokens.toLocaleString()} tokens</span>
+                  <span>{formatNumber(provider.totalTokens)} tokens</span>
                 </div>
               </div>
             );

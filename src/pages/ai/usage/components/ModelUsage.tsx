@@ -1,3 +1,4 @@
+import { formatNumber } from "#lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../ui/card";
 
 import type { AiModelUsage } from "../types/aiUsage.types";
@@ -30,7 +31,7 @@ export function ModelUsage({ data }: ModelUsageProps) {
 
               <div className="shrink-0 text-right">
                 <p className="text-sm font-medium">
-                  {model.totalTokens.toLocaleString()}
+                  {formatNumber(model.totalTokens)}
                 </p>
 
                 <p className="text-xs text-muted-foreground">tokens</p>

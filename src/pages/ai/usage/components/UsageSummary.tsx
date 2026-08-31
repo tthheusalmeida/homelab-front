@@ -2,33 +2,22 @@ import { Activity, Clock3, Coins, Database } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../ui/card";
 
 import type { AiUsageSummary as UsageSummaryData } from "../types/aiUsage.types";
+import { formatDuration, formatNumber } from "#lib/format";
 
 interface UsageSummaryProps {
   data: UsageSummaryData;
-}
-
-function formatTokens(value: number) {
-  if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(2)}M`;
-  }
-
-  if (value >= 1_000) {
-    return `${(value / 1_000).toFixed(1)}K`;
-  }
-
-  return value.toString();
 }
 
 export function UsageSummary({ data }: UsageSummaryProps) {
   const items = [
     {
       title: "Requests",
-      value: data.totalRequests.toLocaleString(),
+      value: formatNumber(data.totalRequests),
       icon: Activity,
     },
     {
       title: "Tokens",
-      value: formatTokens(data.totalTokens),
+      value: formatNumber(data.totalTokens),
       icon: Database,
     },
     {
@@ -38,7 +27,7 @@ export function UsageSummary({ data }: UsageSummaryProps) {
     },
     {
       title: "Latencia média",
-      value: `${data.averageLatencyMs}ms`,
+      value: `${formatDuration(data.averageLatencyMs)}`,
       icon: Clock3,
     },
   ];

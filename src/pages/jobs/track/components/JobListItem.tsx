@@ -1,55 +1,31 @@
 import type { Job } from "../types/job.types";
+import { JobNameLabels } from "../types/job.types";
 
 import { ChevronDown, Timer } from "lucide-react";
 
-import { JobFlow } from "./JobFlow";
-import { JobResult } from "./JobResult";
-import { JobStatusBadge } from "./JobStatusBadge";
+import { formatDateTime, formatDuration } from "#lib/format";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "#ui/collapsible";
-
+import { Badge } from "#ui/badge";
 import { Card, CardContent, CardHeader } from "#ui/card";
 
-import { JobNameLabels } from "../types/job.types";
-import { Badge } from "#ui/badge";
+import { JobFlow } from "./JobFlow";
+import { JobResult } from "./JobResult";
+import { JobStatusBadge } from "./JobStatusBadge";
 
 interface JobListItemProps {
   job: Job;
 }
 
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(new Date(date));
-}
-
-function formatDuration(startedAt?: string, completedAt?: string) {
-  if (!startedAt || !completedAt) {
-    return null;
-  }
-
-  const duration =
-    new Date(completedAt).getTime() - new Date(startedAt).getTime();
-
-  const seconds = Math.floor(duration / 1000);
-
-  if (seconds < 60) {
-    return `${seconds}s`;
-  }
-
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-
-  return `${minutes}min ${remainingSeconds}s`;
-}
-
 export function JobListItem({ job }: JobListItemProps) {
-  const duration = formatDuration(job.startedAt, job.completedAt);
+  const duration =
+    job.startedAt && job.completedAt
+      ? new Date(job.completedAt).getTime() - new Date(job.startedAt).getTime()
+      : null;
 
   return (
     <Collapsible className="group">
@@ -62,13 +38,13 @@ export function JobListItem({ job }: JobListItemProps) {
                   {JobNameLabels[job.name] ?? job.name}
                 </p>
 
-                {duration && (
+                {duration !== null && (
                   <Badge
                     variant="secondary"
                     className="shrink-0 gap-1 animate-in fade-in-0 slide-in-from-left-2 duration-400"
                   >
                     <Timer className="size-3.5" />
-                    {duration}
+                    {formatDuration(duration)}
                   </Badge>
                 )}
               </div>
@@ -83,7 +59,7 @@ export function JobListItem({ job }: JobListItemProps) {
                 <JobStatusBadge status={job.status} />
 
                 <p className="text-xs text-muted-foreground">
-                  Criado em {formatDate(job.createdAt)}
+                  Criado em {formatDateTime(job.createdAt)}
                 </p>
               </div>
 
