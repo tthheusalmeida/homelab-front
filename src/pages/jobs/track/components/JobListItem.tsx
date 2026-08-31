@@ -1,5 +1,5 @@
-import type { Job } from "../types/job.types";
-import { JobNameLabels } from "../types/job.types";
+import type { Job } from "../../types/job.types";
+import { JobNameLabels } from "../../types/job.types";
 
 import { ChevronDown, Timer } from "lucide-react";
 

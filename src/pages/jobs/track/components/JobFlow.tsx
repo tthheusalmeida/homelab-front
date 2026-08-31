@@ -3,7 +3,7 @@ import {
   JobStatusOptions,
   type JobStepState,
   JobStepStateOptions,
-} from "../types/job.types";
+} from "../../types/job.types";
 
 import { JobStep } from "./JobStep";
 

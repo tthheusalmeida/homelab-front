@@ -1,10 +1,9 @@
 import {
   Gauge,
   Home,
-  Kanban,
+  LayersPlus,
   MessageSquare,
   StepForward,
-  Workflow,
 } from "lucide-react";
 
 import { useLocation, useNavigate } from "react-router";
@@ -49,6 +48,11 @@ const navigation = [
   {
     label: "Jobs",
     items: [
+      {
+        title: "Criar",
+        url: "jobs/create",
+        icon: LayersPlus,
+      },
       {
         title: "Inspeção",
         url: "jobs/track",

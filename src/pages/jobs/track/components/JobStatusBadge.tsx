@@ -2,7 +2,7 @@ import { Check, Circle, Loader, X } from "lucide-react";
 
 import { Badge } from "../../../../ui/badge";
 
-import { type JobStatus, JobStatusOptions } from "../types/job.types";
+import { type JobStatus, JobStatusOptions } from "../../types/job.types";
 import { cn } from "#lib/utils";
 
 interface JobStatusBadgeProps {

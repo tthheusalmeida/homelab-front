@@ -2,7 +2,7 @@ import { Check, Circle, Loader, X } from "lucide-react";
 
 import { cn } from "../../../../lib/utils";
 
-import { type JobStepState, JobStepStateOptions } from "../types/job.types";
+import { type JobStepState, JobStepStateOptions } from "../../types/job.types";
 
 interface JobStepProps {
   label: string;

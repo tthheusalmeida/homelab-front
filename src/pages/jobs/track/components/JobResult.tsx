@@ -2,7 +2,7 @@ import { XCircle } from "lucide-react";
 
 import { cn } from "../../../../lib/utils";
 
-import { type JobStatus, JobStatusOptions } from "../types/job.types";
+import { type JobStatus, JobStatusOptions } from "../../types/job.types";
 
 interface JobResultProps {
   status: JobStatus;

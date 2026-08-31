@@ -1,4 +1,4 @@
-import type { Job } from "../types/job.types";
+import type { Job } from "../../types/job.types";
 
 import { JobListItem } from "./JobListItem";
 

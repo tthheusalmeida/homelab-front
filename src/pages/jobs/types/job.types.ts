@@ -37,3 +37,8 @@ export interface Job {
   status: JobStatus;
   error?: string;
 }
+
+export interface JobType {
+  type: string;
+  description: string;
+}
