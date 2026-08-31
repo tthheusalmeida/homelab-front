@@ -29,10 +29,11 @@ export const JobNameLabels: Record<string, string> = {
 };
 
 export interface Job {
-  id: string;
+  completedAt: string;
   createdAt: string;
+  id: string;
   name: string;
-  status: JobStatus;
   startedAt?: string;
+  status: JobStatus;
   error?: string;
 }
