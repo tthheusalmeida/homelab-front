@@ -12,16 +12,27 @@ export const JobStepStateOptions: Record<string, string> = {
   FAILED: "failed",
 } as const;
 
+export const JobNameOptions = {
+  VIDEO_TRANSCRIPT: "video-transcript",
+} as const;
+
 export type JobStatus =
   (typeof JobStatusOptions)[keyof typeof JobStatusOptions];
 
 export type JobStepState =
   (typeof JobStepStateOptions)[keyof typeof JobStepStateOptions];
 
+export type JobName = (typeof JobNameOptions)[keyof typeof JobNameOptions];
+
+export const JobNameLabels: Record<string, string> = {
+  [JobNameOptions.VIDEO_TRANSCRIPT]: "Transcrição de vídeo",
+};
+
 export interface Job {
   id: string;
   createdAt: string;
-  _status: JobStatus;
-  _startedAt?: string;
-  _error?: string;
+  name: string;
+  status: JobStatus;
+  startedAt?: string;
+  error?: string;
 }

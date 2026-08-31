@@ -31,13 +31,5 @@ export function JobResult({ status, error }: JobResultProps) {
         </div>
       </div>
     );
-  }
-
-  if (status === JobStatusOptions.COMPLETED) return;
-
-  return (
-    <div className="rounded-lg border bg-muted/30 p-4">
-      <p className="text-sm text-muted-foreground">Trabalhando...</p>
-    </div>
-  );
+  } else return;
 }
