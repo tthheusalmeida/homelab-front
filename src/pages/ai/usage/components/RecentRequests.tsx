@@ -54,8 +54,8 @@ export function RecentRequests({ data }: RecentRequestsProps) {
                   variant={request.success ? "secondary" : "destructive"}
                   className={
                     request.success
-                      ? "bg-emerald-300 dark:bg-emerald-700 text-secondary dark:text-primary"
-                      : "bg-red-300 dark:bg-red-700 text-secondary dark:text-primary"
+                      ? "bg-emerald-800 text-emerald-300"
+                      : "bg-red-800 text-red-300 "
                   }
                 >
                   {request.success ? "Success" : "Failed"}
