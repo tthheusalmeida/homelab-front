@@ -1,4 +1,4 @@
-import { Check, Circle, Loader2, X } from "lucide-react";
+import { Check, Circle, Loader, X } from "lucide-react";
 
 import { cn } from "../../../../lib/utils";
 
@@ -15,7 +15,7 @@ const stateConfig: Record<JobStepState, { icon: typeof Circle }> = {
   },
 
   [JobStepStateOptions.ACTIVE]: {
-    icon: Loader2,
+    icon: Loader,
   },
 
   [JobStepStateOptions.COMPLETED]: {
@@ -34,10 +34,10 @@ export function JobStep({ label, state }: JobStepProps) {
     <div className="flex min-w-0 items-center gap-2">
       <div
         className={cn(
-          "flex size-7 shrink-0 items-center justify-center rounded-full border",
+          "flex size-5 shrink-0 items-center justify-center rounded-full border",
           state === JobStepStateOptions.ACTIVE && "border-primary text-primary",
           state === JobStepStateOptions.COMPLETED &&
-            "border-emerald-500 bg-emerald-500 text-white",
+            "bg-emerald-800 text-emerald-300",
           state === JobStepStateOptions.FAILED &&
             "border-destructive bg-destructive text-destructive-foreground",
           state === JobStepStateOptions.PENDING && "text-muted-foreground",
@@ -45,8 +45,9 @@ export function JobStep({ label, state }: JobStepProps) {
       >
         <Icon
           className={cn(
-            "size-4",
-            state === JobStepStateOptions.ACTIVE && "animate-spin",
+            "size-3 stroke-3",
+            state === JobStepStateOptions.ACTIVE &&
+              "animate-spin animation-duration-[2s]",
           )}
         />
       </div>
