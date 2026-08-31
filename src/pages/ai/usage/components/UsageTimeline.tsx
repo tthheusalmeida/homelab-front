@@ -69,8 +69,6 @@ export function UsageTimeline({ data }: UsageTimelineProps) {
     );
   });
 
-  console.log(data);
-
   return (
     <Card>
       <CardHeader>

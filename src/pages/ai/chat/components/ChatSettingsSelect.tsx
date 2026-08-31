@@ -39,7 +39,11 @@ export function ChatSettingsSelect({
   const selectedOption = options.find((option) => option.id === value);
 
   return (
-    <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+    <Select
+      value={value ?? null}
+      onValueChange={onValueChange}
+      disabled={disabled}
+    >
       <SelectTrigger
         className={`h-8 ${triggerWidth} border-0 bg-muted/50 shadow-none`}
       >
