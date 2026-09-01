@@ -9,8 +9,11 @@ export async function getJobTypes(): Promise<JobType[]> {
 }
 
 export async function createVideoTranscript(url: string) {
-  return await api<{ id: string; status: string }>("/jobs/video-transcript", {
-    method: "POST",
-    body: JSON.stringify({ url }),
-  });
+  return await api<{ id: string; status: string }>(
+    "/jobs/video-to-transcript",
+    {
+      method: "POST",
+      body: JSON.stringify({ url }),
+    },
+  );
 }
