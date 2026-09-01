@@ -1,5 +1,4 @@
 import type { Job } from "../../types/job.types";
-import { JobNameLabels } from "../../types/job.types";
 
 import { ChevronDown, Timer } from "lucide-react";
 
@@ -34,9 +33,7 @@ export function JobListItem({ job }: JobListItemProps) {
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <div className="flex min-w-0 items-center gap-2">
-                <p className="truncate text-sm font-semibold">
-                  {JobNameLabels[job.name] ?? job.name}
-                </p>
+                <p className="truncate text-sm font-semibold">{job.label}</p>
 
                 {duration !== null && (
                   <Badge

@@ -16,7 +16,7 @@ import { JobTypeList } from "./components/JobTypeList";
 import { JobForm } from "./components/JobForm";
 import { useJobTypes } from "./hooks/useJobsTypes";
 
-import { JobNameLabels, type JobType } from "../types/job.types";
+import { type JobType } from "../types/job.types";
 
 export function CreatePage() {
   const [selectedJobType, setSelectedJobType] = useState<JobType | null>(null);
@@ -69,7 +69,7 @@ export function CreatePage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedJobType ? JobNameLabels[selectedJobType.type] : ""}
+              {selectedJobType ? selectedJobType.label : ""}
             </DialogTitle>
 
             <DialogDescription>

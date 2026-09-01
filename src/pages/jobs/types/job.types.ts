@@ -24,15 +24,12 @@ export type JobStepState =
 
 export type JobName = (typeof JobNameOptions)[keyof typeof JobNameOptions];
 
-export const JobNameLabels: Record<string, string> = {
-  [JobNameOptions.VIDEO_TRANSCRIPT]: "Transcrição de vídeo",
-};
-
 export interface Job {
   completedAt: string;
   createdAt: string;
   id: string;
   name: string;
+  label: string;
   startedAt?: string;
   status: JobStatus;
   error?: string;
@@ -40,5 +37,6 @@ export interface Job {
 
 export interface JobType {
   type: string;
+  label: string;
   description: string;
 }
