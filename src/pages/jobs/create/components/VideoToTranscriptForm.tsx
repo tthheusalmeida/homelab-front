@@ -8,7 +8,7 @@ import { Label } from "#ui/label";
 
 import { useCreateVideoToTranscript } from "../hooks/useCreateVideoToTranscript";
 
-export function VideoTranscriptForm() {
+export function VideoToTranscriptForm() {
   const [url, setUrl] = useState("");
 
   const createJob = useCreateVideoToTranscript();
@@ -16,7 +16,7 @@ export function VideoTranscriptForm() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    createJob.mutate(url);
+    createJob.mutate({ url });
   };
 
   return (

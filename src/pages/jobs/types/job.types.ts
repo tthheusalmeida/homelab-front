@@ -13,7 +13,8 @@ export const JobStepStateOptions: Record<string, string> = {
 } as const;
 
 export const JobNameOptions = {
-  VIDEO_TRANSCRIPT: "video-to-transcript",
+  VIDEO_TO_TRANSCRIPT: "video-to-transcript",
+  VIDEO_TO_SUMMARY: "video-to-summary",
 } as const;
 
 export type JobStatus =

@@ -66,7 +66,7 @@ export function CreatePage() {
           }
         }}
       >
-        <DialogContent>
+        <DialogContent className="w-fit max-w-none sm:max-w-none">
           <DialogHeader>
             <DialogTitle>
               {selectedJobType ? selectedJobType.label : ""}

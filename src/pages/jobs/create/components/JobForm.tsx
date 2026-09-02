@@ -1,6 +1,7 @@
 import { JobNameOptions, type JobType } from "../../types/job.types";
+import { VideoToSummaryForm } from "./VideoToSummaryForm";
 
-import { VideoTranscriptForm } from "./VideoTranscriptForm";
+import { VideoToTranscriptForm } from "./VideoToTranscriptForm";
 
 interface JobFormProps {
   jobType: JobType;
@@ -8,8 +9,10 @@ interface JobFormProps {
 
 export function JobForm({ jobType }: JobFormProps) {
   switch (jobType.type) {
-    case JobNameOptions.VIDEO_TRANSCRIPT:
-      return <VideoTranscriptForm />;
+    case JobNameOptions.VIDEO_TO_TRANSCRIPT:
+      return <VideoToTranscriptForm />;
+    case JobNameOptions.VIDEO_TO_SUMMARY:
+      return <VideoToSummaryForm />;
 
     default:
       return null;
