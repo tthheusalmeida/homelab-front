@@ -8,7 +8,7 @@ export async function getJobTypes(): Promise<JobType[]> {
   return response;
 }
 
-export async function createVideoTranscript(url: string) {
+export async function createVideoToTranscript(url: string) {
   return await api<{ id: string; status: string }>(
     "/jobs/video-to-transcript",
     {
