@@ -1,11 +1,4 @@
-export interface Service {
-  name: string;
-  description: string;
-  url: string;
-  healthUrl: string;
-}
-
-export const services: Service[] = [
+export const services = [
   {
     name: "HomeLab",
     description: "Back end principal do HomeLab",
@@ -13,9 +6,25 @@ export const services: Service[] = [
     healthUrl: "http://localhost:3000/api/v1/health/system",
   },
   {
-    name: "Ollama",
-    description: "Serviço de AI local",
-    url: "http://localhost:11434",
-    healthUrl: "http://localhost:11434",
+    name: "AI",
+    description: "Serviços de AI",
+    url: "http://localhost:3000/api/v1/health/ai",
+    healthUrl: "http://localhost:3000/api/v1/health/ai",
   },
-];
+] as const;
+
+export type HealthCheckStatus = "ok" | "error";
+
+export interface HealthCheck {
+  service: string;
+  description: string;
+  status: HealthCheckStatus;
+}
+
+export interface HealthService {
+  service: string;
+  description: string;
+  checks: HealthCheck[];
+}
+
+export type Service = (typeof services)[number];

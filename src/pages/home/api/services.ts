@@ -1,4 +1,6 @@
-export async function checkService(url: string): Promise<boolean> {
+import type { HealthService } from "../types/services.types";
+
+export async function checkService(url: string): Promise<HealthService> {
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -7,5 +9,5 @@ export async function checkService(url: string): Promise<boolean> {
     );
   }
 
-  return true;
+  return response.json();
 }

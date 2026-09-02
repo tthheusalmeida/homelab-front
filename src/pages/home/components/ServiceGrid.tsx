@@ -1,17 +1,24 @@
-import { services } from "../types/services.types";
+import { services, type HealthCheckStatus } from "../types/services.types";
 import { ServiceCard } from "./ServiceCard";
 
 interface ServiceGridProps {
   queries: {
+    data?: {
+      service: string;
+      description: string;
+      checks: {
+        service: string;
+        description: string;
+        status: HealthCheckStatus;
+      }[];
+    };
     isLoading: boolean;
-    isSuccess: boolean;
-    isError: boolean;
   }[];
 }
 
 export function ServiceGrid({ queries }: ServiceGridProps) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2">
       {services.map((service, index) => {
         const query = queries[index];
 
@@ -19,8 +26,8 @@ export function ServiceGrid({ queries }: ServiceGridProps) {
           <ServiceCard
             key={service.name}
             service={service}
+            health={query.data}
             isLoading={query.isLoading}
-            isOnline={query.isSuccess}
           />
         );
       })}

@@ -55,6 +55,14 @@ export function formatDateTime(date: string | Date): string {
   }).format(parseDate(date));
 }
 
+export function formatServiceName(name: string) {
+  const names: Record<string, string> = {
+    api: "API",
+  };
+
+  return names[name] ?? name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 // Miscellaneous
 
 function parseDate(date: string | Date): Date {

@@ -3,16 +3,6 @@ import { useQueries } from "@tanstack/react-query";
 import { checkService } from "../api/services";
 import { services } from "../types/services.types";
 
-export interface SystemHealth {
-  isLoading: boolean;
-  online: number;
-  offline: number;
-  total: number;
-  allOnline: boolean;
-  allOffline: boolean;
-  hasOffline: boolean;
-}
-
 export function useSystemHealth() {
   const queries = useQueries({
     queries: services.map((service) => ({
@@ -24,17 +14,25 @@ export function useSystemHealth() {
   });
 
   const isLoading = queries.some((query) => query.isLoading);
-  const online = queries.filter((query) => query.isSuccess).length;
-  const offline = queries.filter((query) => query.isError).length;
+
+  const healthServices = queries
+    .map((query) => query.data)
+    .filter((data): data is NonNullable<typeof data> => !!data);
+
+  const checks = healthServices.flatMap((service) => service.checks);
+  const online = checks.filter((check) => check.status === "ok").length;
+  const offline = checks.filter((check) => check.status === "error").length;
+  const total = checks.length;
 
   return {
     queries,
+    services: healthServices,
     isLoading,
     online,
     offline,
-    total: services.length,
-    allOnline: online === services.length,
-    allOffline: offline === services.length,
+    total,
+    allOnline: total > 0 && online === total,
+    allOffline: total > 0 && offline === total,
     hasOffline: offline > 0,
   };
 }
