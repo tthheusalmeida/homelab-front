@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { createVideoTranscript } from "../api/create";
 
-export function useCreateVideoTranscript() {
+export function useCreateVideoToTranscript() {
   return useMutation({
     mutationFn: createVideoTranscript,
   });

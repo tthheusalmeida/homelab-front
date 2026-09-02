@@ -6,12 +6,12 @@ import { Button } from "#ui/button";
 import { Input } from "#ui/input";
 import { Label } from "#ui/label";
 
-import { useCreateVideoTranscript } from "../hooks/useCreateVideoTranscript";
+import { useCreateVideoToTranscript } from "../hooks/useCreateVideoToTranscript";
 
 export function VideoTranscriptForm() {
   const [url, setUrl] = useState("");
 
-  const createJob = useCreateVideoTranscript();
+  const createJob = useCreateVideoToTranscript();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
