@@ -9,7 +9,7 @@ interface JobTypeListProps {
 
 export function JobTypeList({ jobTypes, onSelect }: JobTypeListProps) {
   return (
-    <div className="grid gap-2 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-3">
       {jobTypes.map((jobType) => (
         <JobTypeCard key={jobType.type} jobType={jobType} onSelect={onSelect} />
       ))}
