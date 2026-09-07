@@ -13,7 +13,6 @@ import { Badge } from "#ui/badge";
 import { Card, CardContent, CardHeader } from "#ui/card";
 
 import { JobFlow } from "./JobFlow";
-import { JobResult } from "./JobResult";
 import { JobStatusBadge } from "./JobStatusBadge";
 
 interface JobListItemProps {
@@ -71,9 +70,7 @@ export function JobListItem({ job }: JobListItemProps) {
 
         <CollapsibleContent>
           <CardContent className="space-y-4">
-            {!job.error && <JobFlow status={job.status} />}
-
-            <JobResult status={job.status} error={job.error} />
+            <JobFlow status={job.status} steps={job.steps} />
           </CardContent>
         </CollapsibleContent>
       </Card>

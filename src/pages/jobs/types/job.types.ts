@@ -25,6 +25,12 @@ export type JobStepState =
 
 export type JobName = (typeof JobNameOptions)[keyof typeof JobNameOptions];
 
+export interface JobStepType {
+  name: string;
+  label: string;
+  status: JobStatus;
+}
+
 export interface Job {
   completedAt: string;
   createdAt: string;
@@ -34,6 +40,7 @@ export interface Job {
   startedAt?: string;
   status: JobStatus;
   error?: string;
+  steps: JobStepType[];
 }
 
 export interface JobType {

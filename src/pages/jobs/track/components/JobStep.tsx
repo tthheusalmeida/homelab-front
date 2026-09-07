@@ -7,6 +7,7 @@ import { type JobStepState, JobStepStateOptions } from "../../types/job.types";
 interface JobStepProps {
   label: string;
   state: JobStepState;
+  small?: boolean;
 }
 
 const stateConfig: Record<JobStepState, { icon: typeof Circle }> = {
@@ -27,14 +28,15 @@ const stateConfig: Record<JobStepState, { icon: typeof Circle }> = {
   },
 };
 
-export function JobStep({ label, state }: JobStepProps) {
+export function JobStep({ label, state, small }: JobStepProps) {
   const Icon = stateConfig[state].icon;
 
   return (
     <div className="flex min-w-0 items-center gap-2">
       <div
         className={cn(
-          "flex size-5 shrink-0 items-center justify-center rounded-full border",
+          small ? "size-4" : "size-5",
+          "flex shrink-0 items-center justify-center rounded-full border",
           state === JobStepStateOptions.ACTIVE && "border-primary text-primary",
           state === JobStepStateOptions.COMPLETED &&
             "bg-emerald-800 text-emerald-300",
@@ -45,7 +47,7 @@ export function JobStep({ label, state }: JobStepProps) {
       >
         <Icon
           className={cn(
-            "size-3 stroke-3",
+            small ? "size-2.5 stroke-2.5" : "size-3 stroke-3",
             state === JobStepStateOptions.ACTIVE &&
               "animate-spin animation-duration-[2s]",
           )}
@@ -54,10 +56,8 @@ export function JobStep({ label, state }: JobStepProps) {
 
       <span
         className={cn(
-          "text-sm",
-
+          small ? "text-xs font-mono" : "text-sm",
           state === JobStepStateOptions.PENDING && "text-muted-foreground",
-
           state === JobStepStateOptions.ACTIVE && "font-medium",
         )}
       >
