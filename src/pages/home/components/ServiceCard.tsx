@@ -53,19 +53,22 @@ export function ServiceCard({ service, health, isLoading }: ServiceCardProps) {
               key={check.service}
               className="flex items-center justify-between"
             >
-              <div className="min-w-0">
-                <div className="text-sm">
-                  {formatServiceName(check.service)}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {check.description}
-                </div>
-              </div>
+              <div className="min-w-0 select-none">
+                <div className="flex items-center gap-2">
+                  <ServiceCardStatus
+                    isLoading={false}
+                    isOnline={check.status === "ok"}
+                  />
 
-              <ServiceCardStatus
-                isLoading={false}
-                isOnline={check.status === "ok"}
-              />
+                  <div className="text-sm">
+                    {formatServiceName(check.service)}
+                  </div>
+                </div>
+
+                <p className="mt-1 pl-4 text-xs text-muted-foreground">
+                  {check.description}
+                </p>
+              </div>
             </div>
           ))
         )}
