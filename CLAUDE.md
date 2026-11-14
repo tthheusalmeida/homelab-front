@@ -11,6 +11,7 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 | `doc/chat.md` | Chat com IA: seleção provider/modelo/thinking, envio, cancelamento |
 | `doc/usage.md` | Uso de IA: métricas, filtro, formatação |
 | `doc/jobs.md` | Criar e acompanhar jobs |
+| `doc/components.md` | Regra de reuso de componentes base e lista dos existentes |
 | `doc/lib.md` | `api()`, formatadores, query client |
 | `doc/testing.md` | Convenções de teste e como rodar |
 
@@ -25,7 +26,7 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 - `pages/<área>/` — cada página segue `Page.tsx`, `api/` (chamadas HTTP), `hooks/` (TanStack Query), `components/`, `types/`
   - `home/`, `ai/chat/`, `ai/usage/`, `jobs/create/`, `jobs/track/` (+ `jobs/types`)
 - `components/` — compartilhados (`ErrorState`, `LoadingState`, `MarkdownMessage`, `ClockAndTime`, `AppSidebar`)
-- `ui/` — componentes shadcn/base-ui (não alterar sem necessidade)
+- `ui/` — apenas primitivos shadcn/base-ui (não alterar sem necessidade; componentes base próprios vão em `components/`)
 - `lib/` — `api.ts`, `format.ts`, `queryClient.ts`, `utils.ts` (`cn`)
 - `hooks/use-mobile.ts`
 - `test/` — `setup.ts` (jest-dom, polyfills de jsdom) e `utils.tsx` (`createWrapper`, `renderWithQuery`)
@@ -35,6 +36,11 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 - Textos de interface em **português**.
 - Dados de servidor sempre via TanStack Query (hooks em `hooks/`, chamadas em `api/`); chamadas HTTP passam por `#lib/api`, exceto o health da Home (usa `fetch` direto com URL completa).
 - `jobs` faz polling a cada 1 s; health da Home a cada 15 s.
+
+## Componentes (OBRIGATÓRIO)
+- **Antes de criar qualquer UI, valide se já existe um componente base** em `src/ui/` ou `src/components/` e use-o. Detalhes e lista em `doc/components.md`.
+- Se não existe e o padrão se repete, **crie o componente base primeiro, em `src/components/`,** e então use-o (inclusive onde o padrão já estava duplicado). Não duplique HTML/Tailwind solto.
+- Siga o padrão dos existentes (props tipadas, `cn()`, aliases `#ui/*` `#components/*`).
 
 ## Regras para testes (OBRIGATÓRIO)
 - Toda funcionalidade nova ou alterada precisa de teste ao lado do arquivo (`*.test.ts` / `*.test.tsx`).
