@@ -1,35 +1,40 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useNavigate, useParams } from "react-router";
-import { ArrowLeft, ExternalLink, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
-import { Badge } from "#ui/badge";
 import { Button } from "#ui/button";
 import { Card, CardContent } from "#ui/card";
-import { Separator } from "#ui/separator";
 
 import { ConfirmDialog } from "#components/ConfirmDialog";
 import { ErrorState } from "#components/ErrorState";
 import { LoadingState } from "#components/LoadingState";
 import { MarkdownMessage } from "#components/MarkdownMessage";
-import { formatDateTime } from "#lib/format";
+import { extractHeadings } from "#lib/markdown";
 
 import { CategoryBreadcrumb } from "./components/CategoryBreadcrumb";
-import {
-  DocumentStatusBadge,
-  DocumentTypeBadge,
-} from "./components/DocumentBadges";
+import { DocumentTypeBadge } from "./components/DocumentBadges";
+import { DocumentAboutDialog } from "./components/DocumentAboutDialog";
+import { DocumentSidebar } from "./components/DocumentSidebar";
+import { EditDocumentDialog } from "./components/EditDocumentDialog";
 import { useArchiveDocument, useDocument } from "./hooks/useLibrary";
-import { documentSourceLabels } from "./types/library.types";
+
+type Modal = "about" | "edit" | "remove" | null;
 
 export function DocumentPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  // Uma janela por vez: Editar e Remover fecham a "Sobre" e devolvem para ela.
+  const [modal, setModal] = useState<Modal>(null);
 
   const { data, isLoading, isError } = useDocument(id);
   const archive = useArchiveDocument();
+
+  const headings = useMemo(
+    () => extractHeadings(data?.content ?? ""),
+    [data?.content],
+  );
 
   if (isLoading) {
     return (
@@ -56,80 +61,75 @@ export function DocumentPage() {
 
   const { meta, content } = data;
 
+  const published = meta.status === "published";
+
   function handleArchive() {
     archive.mutate(meta.id, {
-      onSuccess: () => navigate("/library"),
+      onSuccess: () =>
+        navigate("/library", { state: { category: meta.category } }),
     });
   }
 
   return (
     <article className="space-y-6">
-      <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-        <ArrowLeft /> Voltar
-      </Button>
-
-      <header className="space-y-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{meta.title}</h1>
+      <div className="flex flex-wrap items-center gap-3">
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+          <ArrowLeft /> Voltar
+        </Button>
 
         <CategoryBreadcrumb category={meta.category} />
+      </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <DocumentTypeBadge type={meta.type} />
-          <DocumentStatusBadge status={meta.status} />
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]">
+        <div className="min-w-0 space-y-6">
+          <header className="space-y-4 border-b pb-6 pt-8 text-center">
+            <h1 className="text-3xl font-semibold tracking-tight">
+              {meta.title}
+            </h1>
 
-          {meta.tags.map((tag) => (
-            <Badge key={tag} variant="outline">
-              {tag}
-            </Badge>
-          ))}
+            <div className="flex justify-center">
+              <DocumentTypeBadge type={meta.type} />
+            </div>
+          </header>
+
+          <div className="mx-auto w-full max-w-3xl px-4 sm:px-8">
+            <MarkdownMessage content={content} headingIds />
+          </div>
         </div>
 
-        <p className="text-xs text-muted-foreground">
-          {documentSourceLabels[meta.source]} · Criado em{" "}
-          {formatDateTime(meta.createdAt)} · Atualizado em{" "}
-          {formatDateTime(meta.updatedAt)}
-        </p>
+        <DocumentSidebar
+          headings={headings}
+          onOpenAbout={() => setModal("about")}
+        />
+      </div>
 
-        {meta.sourceUrl && (
-          <a
-            href={meta.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-          >
-            <ExternalLink className="size-3" /> Fonte original
-          </a>
-        )}
-      </header>
+      <DocumentAboutDialog
+        open={modal === "about"}
+        onOpenChange={(open) => setModal(open ? "about" : null)}
+        meta={meta}
+        onEdit={published ? () => setModal("edit") : undefined}
+        onRemove={published ? () => setModal("remove") : undefined}
+      />
 
-      <Separator />
-
-      <MarkdownMessage content={content} />
-
-      {meta.status === "published" && (
-        <>
-          <Separator />
-
-          <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
-            <Trash2 /> Remover da biblioteca
-          </Button>
-
-          {archive.isError && (
-            <p className="text-sm text-destructive">
-              Não foi possível remover. Tente novamente.
-            </p>
-          )}
-        </>
-      )}
+      <EditDocumentDialog
+        open={modal === "edit"}
+        onOpenChange={(open) => setModal(open ? "edit" : "about")}
+        document={data}
+      />
 
       <ConfirmDialog
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
+        open={modal === "remove"}
+        onOpenChange={(open) => setModal(open ? "remove" : "about")}
         title="Remover da biblioteca?"
         description="O documento deixa de aparecer na biblioteca, mas o arquivo é mantido e pode ser readicionado pela Entrada."
         confirmLabel="Remover"
         destructive
         isPending={archive.isPending}
+        errorMessage={
+          archive.isError
+            ? "Não foi possível remover. Tente novamente."
+            : undefined
+        }
         onConfirm={handleArchive}
       />
     </article>

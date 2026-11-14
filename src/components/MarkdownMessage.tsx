@@ -1,8 +1,14 @@
+import { Children, isValidElement, useMemo, type ReactNode } from "react";
+
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { headingIdsByLine, slugifyHeading } from "#lib/markdown";
+
 interface MarkdownMessageProps {
   content: string;
+  /** Dá um `id` a cada título, para âncoras e índice (ex.: página do documento). */
+  headingIds?: boolean;
 }
 
 // Links abrem em nova aba sem vazar o referrer; imagens (por URL) nunca
@@ -22,10 +28,59 @@ const components: Components = {
   ),
 };
 
-export function MarkdownMessage({ content }: MarkdownMessageProps) {
+function textOf(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return textOf(node.props.children);
+  }
+
+  return Children.toArray(node).map(textOf).join("");
+}
+
+type HeadingProps = {
+  node?: { position?: { start: { line: number } } };
+  children?: ReactNode;
+};
+
+/** Títulos com id, vindo do mapa linha → id calculado como o do sumário. */
+function withHeadingIds(ids: Map<number, string>): Components {
+  const heading =
+    (Tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6") =>
+    ({ node, children, ...props }: HeadingProps) => (
+      <Tag
+        {...props}
+        id={
+          ids.get(node?.position?.start.line ?? -1) ??
+          slugifyHeading(textOf(children))
+        }
+      >
+        {children}
+      </Tag>
+    );
+
+  return {
+    ...components,
+    h1: heading("h1"),
+    h2: heading("h2"),
+    h3: heading("h3"),
+    h4: heading("h4"),
+    h5: heading("h5"),
+    h6: heading("h6"),
+  };
+}
+
+export function MarkdownMessage({ content, headingIds }: MarkdownMessageProps) {
+  const mapping = useMemo(
+    () => (headingIds ? withHeadingIds(headingIdsByLine(content)) : components),
+    [content, headingIds],
+  );
+
   return (
     <div className="prose prose-sm max-w-none dark:prose-invert">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={mapping}>
         {content}
       </ReactMarkdown>
     </div>

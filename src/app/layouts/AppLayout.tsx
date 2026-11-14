@@ -11,7 +11,7 @@ export function AppLayout() {
     <SidebarProvider>
       <AppSidebar />
 
-      <main className="flex min-h-svh flex-1 flex-col">
+      <main className="flex h-svh min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-50 flex h-14 items-center border-b bg-background px-4">
           <SidebarTrigger />
           <ClockAndTime />

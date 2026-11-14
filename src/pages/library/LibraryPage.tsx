@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Inbox, SearchX, Library as LibraryIcon } from "lucide-react";
 
 import { Button, buttonVariants } from "#ui/button";
@@ -32,9 +32,22 @@ const toOptions = (labels: Record<string, string>, allLabel: string) => [
   ...Object.entries(labels).map(([id, label]) => ({ id, label })),
 ];
 
+/** Lê `{ category: string[] }` do estado de navegação; ignora qualquer outra forma. */
+export function initialCategory(state: unknown): string[] {
+  const value = (state as { category?: unknown } | null)?.category;
+
+  return Array.isArray(value) && value.every((item) => typeof item === "string")
+    ? value
+    : [];
+}
+
 export function LibraryPage() {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<string[]>([]);
+  // Ao voltar de um documento removido, abre já na categoria dele.
+  const location = useLocation();
+  const [category, setCategory] = useState<string[]>(() =>
+    initialCategory(location.state),
+  );
   const [type, setType] = useState<DocumentType>();
   const [source, setSource] = useState<DocumentSource>();
   const [tags, setTags] = useState<string[]>([]);
@@ -103,13 +116,14 @@ export function LibraryPage() {
       </div>
 
       <div className="space-y-3">
-        <SearchInput
-          value={search}
-          onChange={setSearch}
-          placeholder="Pesquisar na biblioteca..."
-        />
-
         <div className="flex flex-wrap items-center gap-2">
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Pesquisar na biblioteca..."
+            className="w-full sm:w-64"
+          />
+
           <OptionSelect
             value={type ?? ALL}
             options={toOptions(documentTypeLabels, "Todos os tipos")}

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 
 const documentQuery = {
   data: undefined as unknown,
@@ -9,6 +9,7 @@ const documentQuery = {
   isError: false,
 };
 const archive = { mutate: vi.fn(), isPending: false, isError: false };
+const update = { mutate: vi.fn(), isPending: false, isError: false };
 const useDocumentSpy = vi.fn();
 
 vi.mock("./hooks/useLibrary", () => ({
@@ -17,6 +18,8 @@ vi.mock("./hooks/useLibrary", () => ({
     return documentQuery;
   },
   useArchiveDocument: () => archive,
+  useCategories: () => ({ data: [] }),
+  useUpdateDocument: () => update,
 }));
 
 import { DocumentPage } from "./DocumentPage";
@@ -37,15 +40,32 @@ const detail = (status = "published") => ({
   content: "# Introdução\n\nVeja [o site](https://x.com).",
 });
 
+function LibraryProbe() {
+  const { state } = useLocation();
+
+  return <p>biblioteca {JSON.stringify(state)}</p>;
+}
+
 const renderPage = (entries = ["/library/id1"], index?: number) =>
   render(
     <MemoryRouter initialEntries={entries} initialIndex={index}>
       <Routes>
-        <Route path="/library" element={<p>página da biblioteca</p>} />
+        <Route path="/library" element={<LibraryProbe />} />
         <Route path="/library/:id" element={<DocumentPage />} />
       </Routes>
     </MemoryRouter>,
   );
+
+const aboutButton = () =>
+  screen.getByRole("button", { name: /Sobre o documento/ });
+
+async function openAbout() {
+  const user = userEvent.setup();
+  renderPage();
+  await user.click(aboutButton());
+
+  return user;
+}
 
 describe("DocumentPage", () => {
   beforeEach(() => {
@@ -55,6 +75,9 @@ describe("DocumentPage", () => {
     archive.mutate.mockReset();
     archive.isPending = false;
     archive.isError = false;
+    update.mutate.mockReset();
+    update.isPending = false;
+    update.isError = false;
     useDocumentSpy.mockClear();
   });
 
@@ -78,53 +101,48 @@ describe("DocumentPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    expect(screen.getByText(/não foi possível abrir o documento/)).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: /Voltar à biblioteca/ }));
+    expect(
+      screen.getByText(/não foi possível abrir o documento/),
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: /Voltar à biblioteca/ }),
+    );
 
-    expect(screen.getByText("página da biblioteca")).toBeInTheDocument();
+    expect(screen.getByText(/^biblioteca/)).toBeInTheDocument();
   });
 
-  it("when loaded, should show title, category, type, status, tags and dates", () => {
+  it("when loaded, should show title, type and category", () => {
     renderPage();
 
     expect(
       screen.getByRole("heading", { name: "Práticas da Primeira Maneira" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("navigation", { name: "Categoria" })).toHaveTextContent(
-      "CiênciaDevOps",
-    );
+    expect(
+      screen.getByRole("navigation", { name: "Categoria" }),
+    ).toHaveTextContent("CiênciaDevOps");
     expect(screen.getByText("Resumo")).toBeInTheDocument();
-    expect(screen.getByText("Na biblioteca")).toBeInTheDocument();
-    expect(screen.getByText("devops")).toBeInTheDocument();
-    expect(screen.getByText(/Criado em/)).toBeInTheDocument();
-    expect(screen.getByText(/Atualizado em/)).toBeInTheDocument();
+  });
+
+  it("when loaded, should keep the document information out of the page until requested", () => {
+    renderPage();
+
+    expect(screen.queryByText("Na biblioteca")).not.toBeInTheDocument();
+    expect(screen.queryByText("Situação")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Editar" }),
+    ).not.toBeInTheDocument();
   });
 
   it("when loaded, should render the content as markdown", () => {
     renderPage();
 
-    expect(screen.getByRole("heading", { name: "Introdução" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Introdução" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "o site" })).toHaveAttribute(
       "target",
       "_blank",
     );
-  });
-
-  it("when the document has a source url, should link to it in a new tab", () => {
-    renderPage();
-
-    const link = screen.getByRole("link", { name: /Fonte original/ });
-    expect(link).toHaveAttribute("href", "https://exemplo.com/v.mp4");
-    expect(link).toHaveAttribute("target", "_blank");
-  });
-
-  it("when the document has no source url, should not show the source link", () => {
-    const value = detail();
-    delete (value.meta as { sourceUrl?: string }).sourceUrl;
-    documentQuery.data = value;
-    renderPage();
-
-    expect(screen.queryByRole("link", { name: /Fonte original/ })).not.toBeInTheDocument();
   });
 
   it("when Voltar is clicked, should go back to the previous page", async () => {
@@ -133,67 +151,178 @@ describe("DocumentPage", () => {
 
     await user.click(screen.getByRole("button", { name: /Voltar$/ }));
 
-    expect(screen.getByText("página da biblioteca")).toBeInTheDocument();
+    expect(screen.getByText(/^biblioteca/)).toBeInTheDocument();
   });
 
-  it("when the document is published, should offer to remove it from the library", () => {
-    renderPage();
+  it("when Sobre o documento is clicked, should open the window with status, tags, dates and source", async () => {
+    await openAbout();
 
+    const dialog = screen.getByRole("dialog");
+
+    expect(within(dialog).getByText("Na biblioteca")).toBeInTheDocument();
+    expect(within(dialog).getByText("devops")).toBeInTheDocument();
+    expect(within(dialog).getByText(/Criado em/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/Atualizado em/)).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole("link", { name: /Fonte original/ }),
+    ).toHaveAttribute("href", "https://exemplo.com/v.mp4");
+  });
+
+  it("when the document is published, should offer edit and remove in the about window", async () => {
+    await openAbout();
+
+    expect(screen.getByRole("button", { name: "Editar" })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /Remover da biblioteca/ }),
     ).toBeInTheDocument();
   });
 
   it.each(["pending", "archived"])(
-    "when the document is %s, should not offer the removal",
-    (status) => {
+    "when the document is %s, should not offer edit or remove",
+    async (status) => {
       documentQuery.data = detail(status);
+      const user = userEvent.setup();
       renderPage();
+      await user.click(aboutButton());
 
+      expect(screen.getByText("Sobre o documento", { selector: "h2" })).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Editar" }),
+      ).not.toBeInTheDocument();
       expect(
         screen.queryByRole("button", { name: /Remover da biblioteca/ }),
       ).not.toBeInTheDocument();
     },
   );
 
-  it("when removal is requested, should ask for confirmation before archiving", async () => {
-    const user = userEvent.setup();
-    renderPage();
+  it("when Editar is clicked, should close the about window and open the editor", async () => {
+    const user = await openAbout();
 
-    await user.click(screen.getByRole("button", { name: /Remover da biblioteca/ }));
+    await user.click(screen.getByRole("button", { name: "Editar" }));
+
+    expect(screen.getByText("Editar documento")).toBeInTheDocument();
+    expect(screen.queryByText("Situação")).not.toBeInTheDocument();
+  });
+
+  it("when the editor is cancelled, should return to the about window", async () => {
+    const user = await openAbout();
+    await user.click(screen.getByRole("button", { name: "Editar" }));
+
+    await user.click(screen.getByRole("button", { name: "Cancelar" }));
+
+    expect(screen.queryByText("Editar documento")).not.toBeInTheDocument();
+    expect(screen.getByText("Situação")).toBeInTheDocument();
+  });
+
+  it("when the edit is saved, should return to the about window", async () => {
+    update.mutate.mockImplementation(
+      (_input: unknown, options: { onSuccess: () => void }) =>
+        options.onSuccess(),
+    );
+    const user = await openAbout();
+    await user.click(screen.getByRole("button", { name: "Editar" }));
+
+    await user.type(screen.getByDisplayValue("Práticas da Primeira Maneira"), "!");
+    await user.click(screen.getByRole("button", { name: /Salvar alterações/ }));
+
+    expect(screen.queryByText("Editar documento")).not.toBeInTheDocument();
+    expect(screen.getByText("Situação")).toBeInTheDocument();
+  });
+
+  it("when removal is requested, should close the about window and ask for confirmation", async () => {
+    const user = await openAbout();
+
+    await user.click(
+      screen.getByRole("button", { name: /Remover da biblioteca/ }),
+    );
 
     expect(screen.getByText("Remover da biblioteca?")).toBeInTheDocument();
+    expect(screen.queryByText("Situação")).not.toBeInTheDocument();
     expect(archive.mutate).not.toHaveBeenCalled();
   });
 
-  it("when the confirmation is cancelled, should not archive", async () => {
-    const user = userEvent.setup();
-    renderPage();
-    await user.click(screen.getByRole("button", { name: /Remover da biblioteca/ }));
+  it("when the confirmation is cancelled, should return to the about window without archiving", async () => {
+    const user = await openAbout();
+    await user.click(
+      screen.getByRole("button", { name: /Remover da biblioteca/ }),
+    );
 
     await user.click(screen.getByRole("button", { name: "Cancelar" }));
 
     expect(archive.mutate).not.toHaveBeenCalled();
+    expect(screen.queryByText("Remover da biblioteca?")).not.toBeInTheDocument();
+    expect(screen.getByText("Situação")).toBeInTheDocument();
   });
 
-  it("when removal is confirmed, should archive the document and return to the library", async () => {
+  it("when removal is confirmed, should archive and return to the library on the document category", async () => {
     archive.mutate.mockImplementation(
       (_id: string, options: { onSuccess: () => void }) => options.onSuccess(),
     );
-    const user = userEvent.setup();
-    renderPage();
-    await user.click(screen.getByRole("button", { name: /Remover da biblioteca/ }));
+    const user = await openAbout();
+    await user.click(
+      screen.getByRole("button", { name: /Remover da biblioteca/ }),
+    );
 
     await user.click(screen.getByRole("button", { name: "Remover" }));
 
     expect(archive.mutate).toHaveBeenCalledWith("id1", expect.any(Object));
-    expect(screen.getByText("página da biblioteca")).toBeInTheDocument();
+    expect(
+      screen.getByText('biblioteca {"category":["Ciência","DevOps"]}'),
+    ).toBeInTheDocument();
   });
 
-  it("when removal fails, should show an error message", () => {
+  it("when removal fails, should show an error in the confirmation and stay on it", async () => {
     archive.isError = true;
-    renderPage();
+    const user = await openAbout();
+
+    await user.click(
+      screen.getByRole("button", { name: /Remover da biblioteca/ }),
+    );
 
     expect(screen.getByText(/Não foi possível remover/)).toBeInTheDocument();
+    expect(screen.getByText("Remover da biblioteca?")).toBeInTheDocument();
+  });
+
+  it("when the text has two or more headings, should show the Sumário and give the headings ids", () => {
+    const value = detail();
+    value.content = "# Introdução\n\ntexto\n\n## Detalhes\n\nmais texto";
+    documentQuery.data = value;
+    renderPage();
+
+    const nav = screen.getByRole("navigation", { name: "Sumário" });
+
+    expect(within(nav).getByText("Detalhes")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Detalhes" })).toHaveAttribute(
+      "id",
+      "detalhes",
+    );
+  });
+
+  it("when the text has fewer than two headings, should not show the Sumário", () => {
+    renderPage();
+
+    expect(
+      screen.queryByRole("navigation", { name: "Sumário" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when loaded, should keep the text in a padded reading column", () => {
+    renderPage();
+
+    const column = screen
+      .getByRole("heading", { name: "Introdução" })
+      .closest("div.max-w-3xl");
+
+    expect(column).toHaveClass("px-4", "sm:px-8");
+  });
+
+  it("when loaded, should center the title block with spacing on top", () => {
+    renderPage();
+
+    const header = screen
+      .getByRole("heading", { name: "Práticas da Primeira Maneira" })
+      .closest("header");
+
+    expect(header).toHaveClass("text-center", "pt-8");
   });
 });

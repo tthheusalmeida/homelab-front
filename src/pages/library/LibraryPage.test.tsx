@@ -57,7 +57,7 @@ vi.mock("#components/OptionSelect", () => ({
   ),
 }));
 
-import { LibraryPage } from "./LibraryPage";
+import { LibraryPage, initialCategory } from "./LibraryPage";
 
 const doc = (id: string, title: string) => ({
   id,
@@ -86,6 +86,18 @@ const renderPage = () =>
     </MemoryRouter>,
   );
 
+describe("initialCategory", () => {
+  it.each([
+    [{ category: ["A", "B"] }, ["A", "B"]],
+    [{ category: "A" }, []],
+    [{ category: [1] }, []],
+    [null, []],
+    [undefined, []],
+  ])("when the state is %j, should return %j", (state, expected) => {
+    expect(initialCategory(state)).toEqual(expected);
+  });
+});
+
 describe("LibraryPage", () => {
   beforeEach(() => {
     Object.assign(documents, {
@@ -99,6 +111,26 @@ describe("LibraryPage", () => {
     tags.data = [{ tag: "devops", count: 2 }];
     vi.mocked(documents.refetch).mockReset();
     useDocumentsSpy.mockClear();
+  });
+
+  it("when opened with a category in the navigation state, should filter by it", () => {
+    render(
+      <MemoryRouter
+        initialEntries={[{ pathname: "/library", state: { category: ["Ciência"] } }]}
+      >
+        <LibraryPage />
+      </MemoryRouter>,
+    );
+
+    expect(lastFilters().category).toEqual(["Ciência"]);
+  });
+
+  it("when rendered, should keep the search field compact beside the filters", () => {
+    renderPage();
+
+    const search = screen.getByLabelText("Pesquisar na biblioteca...");
+
+    expect(search.parentElement).toHaveClass("sm:w-64");
   });
 
   it("when documents are loading, should show the loading state", () => {
