@@ -107,6 +107,26 @@ describe("DocumentAboutDialog", () => {
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
 
+  it("when onAddToBook is given, should show the button and call it", async () => {
+    const onAddToBook = vi.fn();
+    const user = userEvent.setup();
+    renderDialog({ onAddToBook });
+
+    await user.click(
+      screen.getByRole("button", { name: /Adicionar a um livro/ }),
+    );
+
+    expect(onAddToBook).toHaveBeenCalledTimes(1);
+  });
+
+  it("when onAddToBook is not given, should not show the add to book button", () => {
+    renderDialog();
+
+    expect(
+      screen.queryByRole("button", { name: /Adicionar a um livro/ }),
+    ).not.toBeInTheDocument();
+  });
+
   it("when edit and remove are not given, should not show the action buttons", () => {
     renderDialog();
 

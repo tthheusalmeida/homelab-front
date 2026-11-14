@@ -13,6 +13,8 @@ import { InboxPage } from "../pages/library/InboxPage";
 import { NewArticlePage } from "../pages/library/NewArticlePage";
 import { DocumentPage } from "../pages/library/DocumentPage";
 import { EditDocumentPage } from "../pages/library/EditDocumentPage";
+import { BooksPage } from "../pages/library/books/BooksPage";
+import { BookPage } from "../pages/library/books/BookPage";
 
 import { CreatePage } from "../pages/jobs/create/CreatePage";
 import { TrackPage } from "../pages/jobs/track/TrackPage";
@@ -41,6 +43,14 @@ export const router = createBrowserRouter([
           {
             path: "new",
             element: <NewArticlePage />,
+          },
+          {
+            path: "books",
+            element: <BooksPage />,
+          },
+          {
+            path: "books/:bookId",
+            element: <BookPage />,
           },
           {
             path: ":id",

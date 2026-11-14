@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   FilePlus,
   Gauge,
   Home,
@@ -40,6 +41,11 @@ const navigation = [
         title: "Acervo",
         url: "/library",
         icon: Library,
+      },
+      {
+        title: "Livros",
+        url: "/library/books",
+        icon: BookOpen,
       },
       {
         title: "Entrada",

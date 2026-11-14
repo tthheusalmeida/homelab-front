@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { BookPlus, ExternalLink, Pencil, Trash2 } from "lucide-react";
 
 import { Badge } from "#ui/badge";
 import { Button } from "#ui/button";
@@ -28,6 +28,8 @@ interface DocumentAboutDialogProps {
   onEdit?: () => void;
   /** Sem esta função o botão Remover não aparece (documento não publicado). */
   onRemove?: () => void;
+  /** Sem esta função o botão "Adicionar a um livro" não aparece. */
+  onAddToBook?: () => void;
 }
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
@@ -50,6 +52,7 @@ export function DocumentAboutDialog({
   meta,
   onEdit,
   onRemove,
+  onAddToBook,
 }: DocumentAboutDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -97,8 +100,14 @@ export function DocumentAboutDialog({
           )}
         </dl>
 
-        {(onEdit || onRemove) && (
+        {(onEdit || onRemove || onAddToBook) && (
           <DialogFooter>
+            {onAddToBook && (
+              <Button variant="outline" onClick={onAddToBook}>
+                <BookPlus /> Adicionar a um livro
+              </Button>
+            )}
+
             {onEdit && (
               <Button variant="outline" onClick={onEdit}>
                 <Pencil /> Editar

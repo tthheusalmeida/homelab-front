@@ -22,6 +22,16 @@ vi.mock("./hooks/useLibrary", () => ({
   useUpdateDocument: () => update,
 }));
 
+vi.mock("./books/hooks", () => ({
+  useBooks: () => ({ data: [], isLoading: false }),
+  useAddBookChapter: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+    isError: false,
+  }),
+  useCreateBook: () => ({ mutate: vi.fn(), isPending: false, isError: false }),
+}));
+
 import { DocumentPage } from "./DocumentPage";
 
 const detail = (status = "published") => ({
@@ -185,7 +195,9 @@ describe("DocumentPage", () => {
       renderPage();
       await user.click(aboutButton());
 
-      expect(screen.getByText("Sobre o documento", { selector: "h2" })).toBeInTheDocument();
+      expect(
+        screen.getByText("Sobre o documento", { selector: "h2" }),
+      ).toBeInTheDocument();
       expect(
         screen.queryByRole("button", { name: "Editar" }),
       ).not.toBeInTheDocument();
@@ -222,12 +234,54 @@ describe("DocumentPage", () => {
     const user = await openAbout();
     await user.click(screen.getByRole("button", { name: "Editar" }));
 
-    await user.type(screen.getByDisplayValue("Práticas da Primeira Maneira"), "!");
+    await user.type(
+      screen.getByDisplayValue("Práticas da Primeira Maneira"),
+      "!",
+    );
     await user.click(screen.getByRole("button", { name: /Salvar alterações/ }));
 
     expect(screen.queryByText("Editar documento")).not.toBeInTheDocument();
     expect(screen.getByText("Situação")).toBeInTheDocument();
   });
+
+  it("when Adicionar a um livro is clicked, should close the about window and open the book picker", async () => {
+    const user = await openAbout();
+
+    await user.click(
+      screen.getByRole("button", { name: /Adicionar a um livro/ }),
+    );
+
+    expect(screen.getByLabelText("Nome do novo livro")).toBeInTheDocument();
+    expect(screen.queryByText("Situação")).not.toBeInTheDocument();
+  });
+
+  it("when the book picker is closed, should return to the about window", async () => {
+    const user = await openAbout();
+    await user.click(
+      screen.getByRole("button", { name: /Adicionar a um livro/ }),
+    );
+
+    await user.keyboard("{Escape}");
+
+    expect(
+      screen.queryByLabelText("Nome do novo livro"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("Situação")).toBeInTheDocument();
+  });
+
+  it.each(["pending", "archived"])(
+    "when the document is %s, should not offer adding to a book",
+    async (status) => {
+      documentQuery.data = detail(status);
+      const user = userEvent.setup();
+      renderPage();
+      await user.click(aboutButton());
+
+      expect(
+        screen.queryByRole("button", { name: /Adicionar a um livro/ }),
+      ).not.toBeInTheDocument();
+    },
+  );
 
   it("when removal is requested, should close the about window and ask for confirmation", async () => {
     const user = await openAbout();
@@ -250,7 +304,9 @@ describe("DocumentPage", () => {
     await user.click(screen.getByRole("button", { name: "Cancelar" }));
 
     expect(archive.mutate).not.toHaveBeenCalled();
-    expect(screen.queryByText("Remover da biblioteca?")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Remover da biblioteca?"),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Situação")).toBeInTheDocument();
   });
 

@@ -17,9 +17,10 @@ import { DocumentTypeBadge } from "./components/DocumentBadges";
 import { DocumentAboutDialog } from "./components/DocumentAboutDialog";
 import { DocumentSidebar } from "./components/DocumentSidebar";
 import { EditDocumentDialog } from "./components/EditDocumentDialog";
+import { AddToBookDialog } from "./books/components/AddToBookDialog";
 import { useArchiveDocument, useDocument } from "./hooks/useLibrary";
 
-type Modal = "about" | "edit" | "remove" | null;
+type Modal = "about" | "edit" | "remove" | "book" | null;
 
 export function DocumentPage() {
   const { id } = useParams();
@@ -109,6 +110,13 @@ export function DocumentPage() {
         meta={meta}
         onEdit={published ? () => setModal("edit") : undefined}
         onRemove={published ? () => setModal("remove") : undefined}
+        onAddToBook={published ? () => setModal("book") : undefined}
+      />
+
+      <AddToBookDialog
+        open={modal === "book"}
+        onOpenChange={(open) => setModal(open ? "book" : "about")}
+        documentId={meta.id}
       />
 
       <EditDocumentDialog

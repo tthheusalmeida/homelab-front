@@ -41,13 +41,14 @@ describe("AppSidebar", () => {
   it("when rendered, should list the library items", () => {
     renderSidebar();
 
-    for (const title of ["Acervo", "Entrada", "Novo artigo"]) {
+    for (const title of ["Acervo", "Livros", "Entrada", "Novo artigo"]) {
       expect(screen.getByRole("button", { name: title })).toBeInTheDocument();
     }
   });
 
   it.each([
     ["Acervo", "/library"],
+    ["Livros", "/library/books"],
     ["Entrada", "/library/inbox"],
     ["Novo artigo", "/library/new"],
   ])("when %s is clicked, should navigate to %s", async (title, path) => {
