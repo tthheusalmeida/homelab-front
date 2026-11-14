@@ -5,6 +5,7 @@ import {
   bookStats,
   countWords,
   formatReadingTime,
+  minutesToRead,
 } from "./stats";
 import type { BookReading } from "./types";
 
@@ -93,5 +94,17 @@ describe("formatReadingTime", () => {
     [80, "1 h 20 min"],
   ])("when the minutes are %p, should show %s", (minutes, text) => {
     expect(formatReadingTime(minutes)).toBe(text);
+  });
+});
+
+describe("minutesToRead", () => {
+  it.each([
+    [0, 0],
+    [-5, 0],
+    [1, 1],
+    [WORDS_PER_MINUTE, 1],
+    [WORDS_PER_MINUTE + 1, 2],
+  ])("when there are %p words, should take %p minute(s)", (words, minutes) => {
+    expect(minutesToRead(words)).toBe(minutes);
   });
 });

@@ -17,6 +17,11 @@ export function countWords(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
 }
 
+/** Minutos de leitura estimados para essa quantidade de palavras (mínimo 1 se houver texto). */
+export function minutesToRead(words: number): number {
+  return words <= 0 ? 0 : Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
+}
+
 /** Números do livro a partir do texto lido (só capítulos disponíveis). */
 export function bookStats(reading: BookReading): BookStats {
   const wordsByChapter = new Map<string, number>();
@@ -37,7 +42,7 @@ export function bookStats(reading: BookReading): BookStats {
     modules: reading.modules.length,
     chapters,
     words,
-    minutes: words === 0 ? 0 : Math.max(1, Math.ceil(words / WORDS_PER_MINUTE)),
+    minutes: minutesToRead(words),
     wordsByChapter,
   };
 }
