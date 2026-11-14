@@ -18,6 +18,6 @@ Toda feature (nova ou alterada) deve vir acompanhada de testes unitários na mes
 - Timers: `vi.useFakeTimers()` (relógio e animação de digitação).
 
 ## Cobertura atual
-`lib/*`, `use-mobile`, api e hooks de chat/usage/home/jobs, `ChatPage`, componentes de chat, páginas Create/Track/Usage (loading/erro/dados/filtro), formulários e cartões de jobs, fluxo e status de jobs, componentes da Home, componentes compartilhados.
+`lib/*`, `use-mobile`, `use-debounced-value`, biblioteca (api, hooks, componentes, as quatro páginas), componentes base (`TagInput`, `CategoryPicker`, `SearchInput`, `EmptyState`, `ConfirmDialog`, `OptionSelect`), `AppSidebar`, api e hooks de chat/usage/home/jobs, `ChatPage`, componentes de chat, páginas Create/Track/Usage (loading/erro/dados/filtro), formulários e cartões de jobs, fluxo e status de jobs, componentes da Home, componentes compartilhados.
 
-Não coberto: `AppLayout`/`AppSidebar`, `router.tsx`, `src/ui/*` (shadcn), gráficos (`UsageTimeline`, `ProviderUsage`, `ModelUsage`, recharts) e `ChatSettings(Select)`.
+Não coberto: `AppLayout`, `router.tsx`, `src/ui/*` (shadcn), gráficos (`UsageTimeline`, `ProviderUsage`, `ModelUsage`, recharts) e `ChatSettings`.

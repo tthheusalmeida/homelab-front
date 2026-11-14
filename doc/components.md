@@ -10,11 +10,14 @@
 
 ## Onde ficam
 - `src/ui/` — primitivos shadcn/base-ui: `badge`, `button`, `card`, `chart`, `collapsible`, `dialog`, `input`, `label`, `scroll-area`, `select`, `separator`, `sheet`, `sidebar`, `skeleton`, `table`, `textarea`, `tooltip`. Só recebe primitivos vindos do CLI do shadcn (`components.json`); componentes base próprios do projeto não vão aqui.
-- `src/components/` — **local dos componentes base do projeto**, compartilhados entre páginas: `ErrorState` (erro com ação opcional), `LoadingState` (texto com pontinhos), `MarkdownMessage` (Markdown GFM), `ClockAndTime`, `AppSidebar`.
+- `src/components/` — **local dos componentes base do projeto**, compartilhados entre páginas: `ErrorState` (erro com ação opcional), `LoadingState` (texto com pontinhos), `EmptyState` (estado vazio com ícone, texto e ação), `MarkdownMessage` (Markdown GFM; links em nova aba, imagens responsivas, sem HTML cru), `OptionSelect` (select de opções `{id,label}`), `SearchInput` (campo de pesquisa), `TagInput` (tags em chips), `CategoryPicker` (categoria em até 4 níveis com sugestões), `ConfirmDialog` (confirmação, com modo destrutivo), `ClockAndTime`, `AppSidebar`.
+- `src/hooks/` — `use-mobile`, `use-debounced-value`.
 - `pages/<área>/components/` — específicos da página, sem reuso; ao surgir o segundo uso, mova/crie o componente em `src/components/`.
 
 ## Padrões já estabelecidos (reutilize)
 - Carregando: `LoadingState`. Erro de carregamento: `ErrorState` dentro de `Card`/`CardContent`.
 - Status de job: `JobStatusBadge`; etapa de fluxo: `JobStep`.
-- Seleção de provider/modelo/thinking: `ChatSettingsSelect` (usado no chat e no formulário de resumo; há um TODO para extrair um seletor próprio, o que seguiria a regra 3, criando o componente em `src/components/`).
+- Seleção de uma opção (provider, modelo, thinking, tipo, origem, ordenação): `OptionSelect`.
+- Estado vazio: `EmptyState`. Confirmação antes de ação destrutiva: `ConfirmDialog`. Pesquisa: `SearchInput`. Tags: `TagInput`. Categoria hierárquica: `CategoryPicker`.
+- Links que parecem botão: `<Link className={buttonVariants({ variant })}>` (`#ui/button`), não `Button` envolvendo link.
 - Cartões de métrica: `Card`/`CardHeader`/`CardContent`; tabelas: `Table*`; selos: `Badge`.
