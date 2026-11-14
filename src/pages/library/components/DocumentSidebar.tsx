@@ -1,35 +1,37 @@
-import { ChevronRight, Info } from "lucide-react";
+import { BookOpenText, ChevronRight, Info } from "lucide-react";
 
 import { Button } from "#ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "#ui/card";
+import { scrollToId } from "#lib/scroll";
 import type { Heading } from "#lib/markdown";
+
+import { OutlineNav } from "#components/OutlineNav";
 
 interface DocumentSidebarProps {
   /** Títulos do texto, para o "Sumário". */
   headings: Heading[];
-  /** Abre a janela "Sobre o documento". */
+  /** Título sendo lido agora (destacado no sumário). */
+  activeId?: string;
+  /** Abre a janela "Sobre a página". */
   onOpenAbout: () => void;
-}
-
-function scrollToHeading(id: string) {
-  document.getElementById(id)?.scrollIntoView?.({
-    behavior: "smooth",
-    block: "start",
-  });
+  /** Entra no modo leitura. */
+  onStartReading: () => void;
 }
 
 /**
- * Painel fixo ao lado do texto: "Sumário" dos títulos e o botão que abre a
- * janela "Sobre o documento". Fica visível enquanto o texto rola (em telas
- * largas).
+ * Painel fixo ao lado do texto: "Sumário" dos títulos (com o trecho em leitura
+ * em destaque), o botão do modo leitura e o botão que abre a janela "Sobre a
+ * página". Fica visível enquanto o texto rola (em telas largas).
  */
 export function DocumentSidebar({
   headings,
+  activeId,
   onOpenAbout,
+  onStartReading,
 }: DocumentSidebarProps) {
   return (
     <aside
-      aria-label="Informações do documento"
+      aria-label="Informações da página"
       className="space-y-4 lg:sticky lg:top-4 lg:self-start"
     >
       {headings.length >= 2 && (
@@ -39,27 +41,29 @@ export function DocumentSidebar({
           </CardHeader>
 
           <CardContent>
-            <nav aria-label="Sumário">
-              <ul className="max-h-[60dvh] space-y-1.5 overflow-y-auto pr-1">
-                {headings.map((heading) => (
-                  <li
-                    key={heading.id}
-                    style={{ paddingLeft: `${(heading.level - 1) * 0.75}rem` }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => scrollToHeading(heading.id)}
-                      className="w-full text-left text-sm text-muted-foreground hover:text-foreground hover:underline"
-                    >
-                      {heading.text}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <OutlineNav
+              ariaLabel="Sumário"
+              className="max-h-[60dvh]"
+              items={headings.map((heading) => ({
+                id: heading.id,
+                label: heading.text,
+                level: heading.level,
+              }))}
+              activeId={activeId}
+              onSelect={scrollToId}
+            />
           </CardContent>
         </Card>
       )}
+
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full justify-start"
+        onClick={onStartReading}
+      >
+        <BookOpenText /> Modo leitura
+      </Button>
 
       <Button
         type="button"
@@ -68,7 +72,7 @@ export function DocumentSidebar({
         onClick={onOpenAbout}
       >
         <span className="inline-flex items-center gap-2">
-          <Info /> Sobre o documento
+          <Info /> Sobre a página
         </span>
 
         <ChevronRight />

@@ -3,9 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "#ui/card";
 import { SearchInput } from "#components/SearchInput";
 
 import type { BookReading, BookSearchHit } from "../types";
+import { BookOutline } from "./BookOutline";
 
 interface BookSidebarProps {
   modules: BookReading["modules"];
+  /** Capítulo sendo lido agora (id do documento). */
+  activeChapterId?: string;
   query: string;
   onQueryChange: (value: string) => void;
   /** `undefined` enquanto a pesquisa não rodou (consulta curta). */
@@ -21,6 +24,7 @@ interface BookSidebarProps {
  */
 export function BookSidebar({
   modules,
+  activeChapterId,
   query,
   onQueryChange,
   hits,
@@ -29,7 +33,6 @@ export function BookSidebar({
   onSelectHit,
 }: BookSidebarProps) {
   const searching = query.trim().length >= 2;
-  let chapterNumber = 0;
 
   return (
     <aside
@@ -97,37 +100,12 @@ export function BookSidebar({
         </CardHeader>
 
         <CardContent>
-          <nav aria-label="Sumário do livro">
-            <ul className="max-h-[50dvh] space-y-3 overflow-y-auto pr-1">
-              {modules.map((module) => (
-                <li key={module.id} className="space-y-1">
-                  {module.title && (
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {module.title}
-                    </p>
-                  )}
-
-                  <ul className="space-y-1">
-                    {module.chapters.map((chapter) => {
-                      chapterNumber += 1;
-
-                      return (
-                        <li key={chapter.documentId}>
-                          <button
-                            type="button"
-                            onClick={() => onSelectChapter(chapter.documentId)}
-                            className="w-full text-left text-sm text-muted-foreground hover:text-foreground hover:underline"
-                          >
-                            {chapterNumber}. {chapter.title}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <BookOutline
+            modules={modules}
+            activeChapterId={activeChapterId}
+            onSelectChapter={onSelectChapter}
+            className="max-h-[50dvh]"
+          />
         </CardContent>
       </Card>
     </aside>

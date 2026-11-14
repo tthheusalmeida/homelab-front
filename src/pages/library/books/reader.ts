@@ -26,3 +26,19 @@ export function hitTargetId(hit: BookSearchHit, content: string): string {
     ? headingElementId(hit.documentId, best.id)
     : chapterElementId(hit.documentId);
 }
+
+/** Rola até o elemento e destaca por um instante (para onde o leitor foi levado). */
+export function goToElement(elementId: string) {
+  const element = document.getElementById(elementId);
+
+  if (!element) {
+    return;
+  }
+
+  element.scrollIntoView?.({ behavior: "smooth", block: "start" });
+  element.classList.add("bg-primary/15", "rounded-md");
+  window.setTimeout(
+    () => element.classList.remove("bg-primary/15", "rounded-md"),
+    1800,
+  );
+}

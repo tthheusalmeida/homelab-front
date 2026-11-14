@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 
-import { Link, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
   ArrowLeft,
-  ArrowRight,
   BookOpen,
+  BookOpenText,
   Info,
   ListOrdered,
   Pencil,
@@ -18,35 +18,22 @@ import { ConfirmDialog } from "#components/ConfirmDialog";
 import { EmptyState } from "#components/EmptyState";
 import { ErrorState } from "#components/ErrorState";
 import { LoadingState } from "#components/LoadingState";
-import { MarkdownMessage } from "#components/MarkdownMessage";
+import { ReadingMode } from "#components/ReadingMode";
+import { useActiveSection } from "#hooks/use-active-section";
 import { useDebouncedValue } from "#hooks/use-debounced-value";
 
+import { BookContent } from "./components/BookContent";
 import { BookCover } from "./components/BookCover";
 import { BookDetailsDialog } from "./components/BookDetailsDialog";
 import { BookFormDialog } from "./components/BookFormDialog";
 import { BookOrganizerDialog } from "./components/BookOrganizerDialog";
+import { BookOutline } from "./components/BookOutline";
 import { BookSidebar } from "./components/BookSidebar";
 import { useBook, useBookReading, useBookSearch, useDeleteBook } from "./hooks";
-import { chapterElementId, hitTargetId } from "./reader";
+import { chapterElementId, goToElement, hitTargetId } from "./reader";
 import type { BookSearchHit } from "./types";
 
 type Modal = "organize" | "edit" | "delete" | "details" | null;
-
-/** Rola até o elemento e destaca por um instante. */
-function goTo(elementId: string) {
-  const element = document.getElementById(elementId);
-
-  if (!element) {
-    return;
-  }
-
-  element.scrollIntoView?.({ behavior: "smooth", block: "start" });
-  element.classList.add("bg-primary/15", "rounded-md");
-  window.setTimeout(
-    () => element.classList.remove("bg-primary/15", "rounded-md"),
-    1800,
-  );
-}
 
 export function BookPage() {
   const { bookId } = useParams();
@@ -58,6 +45,7 @@ export function BookPage() {
 
   const [modal, setModal] = useState<Modal>(null);
   const [search, setSearch] = useState("");
+  const [reader, setReader] = useState(false);
 
   const query = useDebouncedValue(search);
   const results = useBookSearch(bookId, query);
@@ -73,6 +61,19 @@ export function BookPage() {
 
     return map;
   }, [reading.data]);
+
+  // Capítulo em leitura agora (destacado no sumário).
+  const chapterIds = useMemo(
+    () =>
+      (reading.data?.modules ?? []).flatMap((module) =>
+        module.chapters.map((chapter) => chapterElementId(chapter.documentId)),
+      ),
+    [reading.data],
+  );
+  const activeChapterId = useActiveSection(chapterIds)?.replace(
+    /^chapter-/,
+    "",
+  );
 
   if (reading.isLoading) {
     return (
@@ -102,12 +103,38 @@ export function BookPage() {
     (sum, module) => sum + module.chapters.length,
     0,
   );
-  // Capítulos na ordem de leitura (para o "Próximo" do fim de cada um).
-  const chapterOrder = modules.flatMap((module) => module.chapters);
-  let chapterNumber = 0;
+
+  if (reader && totalChapters > 0) {
+    return (
+      <ReadingMode
+        title={book.title}
+        onExit={() => setReader(false)}
+        toc={
+          <BookOutline
+            modules={modules}
+            activeChapterId={activeChapterId}
+            className="max-h-[70dvh]"
+            onSelectChapter={(documentId) =>
+              goToElement(chapterElementId(documentId))
+            }
+          />
+        }
+      >
+        <div className="mx-auto w-full max-w-3xl">
+          <BookContent
+            reading
+            modules={modules}
+            onGoToChapter={(documentId) =>
+              goToElement(chapterElementId(documentId))
+            }
+          />
+        </div>
+      </ReadingMode>
+    );
+  }
 
   function handleHit(hit: BookSearchHit) {
-    goTo(hitTargetId(hit, contents.get(hit.documentId) ?? ""));
+    goToElement(hitTargetId(hit, contents.get(hit.documentId) ?? ""));
   }
 
   function handleDelete() {
@@ -147,6 +174,12 @@ export function BookPage() {
         )}
 
         <div className="flex flex-wrap justify-center gap-2">
+          {totalChapters > 0 && (
+            <Button variant="default" onClick={() => setReader(true)}>
+              <BookOpenText /> Modo leitura
+            </Button>
+          )}
+
           <Button variant="outline" onClick={() => setModal("details")}>
             <Info /> Detalhes
           </Button>
@@ -169,7 +202,7 @@ export function BookPage() {
         <EmptyState
           icon={BookOpen}
           title="Este livro ainda não tem capítulos"
-          description="Use Organizar para adicionar documentos da biblioteca e definir a ordem."
+          description="Use Organizar para adicionar páginas da biblioteca e definir a ordem."
           action={
             <Button variant="secondary" onClick={() => setModal("organize")}>
               <ListOrdered /> Organizar
@@ -178,85 +211,25 @@ export function BookPage() {
         />
       ) : (
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
-          <div className="mx-auto w-full min-w-0 max-w-3xl space-y-16 px-4 sm:px-8">
-            {modules.map((module) => (
-              <section key={module.id} className="space-y-10">
-                {module.title && (
-                  <div className="rounded-xl bg-primary/10 px-6 py-5">
-                    <h2 className="text-2xl font-semibold tracking-tight">
-                      {module.title}
-                    </h2>
-                  </div>
-                )}
-
-                {module.chapters.map((chapter) => {
-                  chapterNumber += 1;
-                  const position = chapterNumber;
-                  const next = chapterOrder[position];
-
-                  return (
-                    <section
-                      key={chapter.documentId}
-                      id={chapterElementId(chapter.documentId)}
-                      aria-label={chapter.title}
-                      className="scroll-mt-4 overflow-hidden rounded-xl border-2 bg-card shadow-sm"
-                    >
-                      <header className="flex flex-wrap items-center justify-between gap-2 border-b-2 bg-muted px-6 py-4">
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-                            Capítulo {position}
-                          </p>
-
-                          <p className="truncate text-lg font-semibold">
-                            {chapter.title}
-                          </p>
-                        </div>
-
-                        <Link
-                          to={`/library/${chapter.documentId}`}
-                          className="text-xs text-muted-foreground hover:underline"
-                        >
-                          Abrir documento
-                        </Link>
-                      </header>
-
-                      <div className="px-6 py-6 sm:px-10">
-                        <MarkdownMessage
-                          content={chapter.content}
-                          headingIds
-                          idPrefix={chapter.documentId}
-                        />
-                      </div>
-
-                      <footer className="flex flex-wrap items-center justify-between gap-2 border-t-2 bg-muted px-6 py-3 text-xs text-muted-foreground">
-                        <span>Fim do capítulo {position}</span>
-
-                        {next && (
-                          <Button
-                            variant="ghost"
-                            size="xs"
-                            onClick={() =>
-                              goTo(chapterElementId(next.documentId))
-                            }
-                          >
-                            Próximo: {next.title} <ArrowRight />
-                          </Button>
-                        )}
-                      </footer>
-                    </section>
-                  );
-                })}
-              </section>
-            ))}
+          <div className="mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-8">
+            <BookContent
+              modules={modules}
+              onGoToChapter={(documentId) =>
+                goToElement(chapterElementId(documentId))
+              }
+            />
           </div>
 
           <BookSidebar
             modules={modules}
+            activeChapterId={activeChapterId}
             query={search}
             onQueryChange={setSearch}
             hits={results.data}
             isSearching={results.isFetching}
-            onSelectChapter={(documentId) => goTo(chapterElementId(documentId))}
+            onSelectChapter={(documentId) =>
+              goToElement(chapterElementId(documentId))
+            }
             onSelectHit={handleHit}
           />
         </div>
@@ -286,7 +259,7 @@ export function BookPage() {
         open={modal === "delete"}
         onOpenChange={(open) => setModal(open ? "delete" : null)}
         title="Excluir o livro?"
-        description="Só o livro é excluído. Os documentos continuam na biblioteca."
+        description="Só o livro é excluído. As páginas continuam na biblioteca."
         confirmLabel="Excluir"
         destructive
         isPending={remove.isPending}

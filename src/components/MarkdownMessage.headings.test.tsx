@@ -16,7 +16,10 @@ describe("MarkdownMessage — heading ids", () => {
 
   it("when headingIds is set, should give each heading a slug id", () => {
     render(
-      <MarkdownMessage content={"# Ligações Químicas\n\n## Passo 1"} headingIds />,
+      <MarkdownMessage
+        content={"# Ligações Químicas\n\n## Passo 1"}
+        headingIds
+      />,
     );
 
     expect(
@@ -79,7 +82,11 @@ describe("MarkdownMessage — heading ids and the summary", () => {
 describe("MarkdownMessage — idPrefix", () => {
   it("when idPrefix is set, should prefix every heading id", () => {
     render(
-      <MarkdownMessage content={"# Docker\n\n## Imagens"} headingIds idPrefix="d1" />,
+      <MarkdownMessage
+        content={"# Docker\n\n## Imagens"}
+        headingIds
+        idPrefix="d1"
+      />,
     );
 
     expect(screen.getByRole("heading", { name: "Docker" })).toHaveAttribute(
@@ -104,5 +111,24 @@ describe("MarkdownMessage — idPrefix", () => {
       "a-intro",
       "b-intro",
     ]);
+  });
+});
+
+describe("MarkdownMessage — size", () => {
+  it("when size is not given, should use the small prose", () => {
+    render(<MarkdownMessage content="# T" />);
+
+    expect(screen.getByRole("heading").closest(".prose")).toHaveClass(
+      "prose-sm",
+    );
+  });
+
+  it("when size is base, should use the base prose and not the small one", () => {
+    render(<MarkdownMessage content="# T" size="base" className="extra" />);
+
+    const text = screen.getByRole("heading").closest(".prose");
+
+    expect(text).toHaveClass("prose-base", "extra");
+    expect(text).not.toHaveClass("prose-sm");
   });
 });

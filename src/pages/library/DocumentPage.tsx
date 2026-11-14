@@ -10,7 +10,12 @@ import { ConfirmDialog } from "#components/ConfirmDialog";
 import { ErrorState } from "#components/ErrorState";
 import { LoadingState } from "#components/LoadingState";
 import { MarkdownMessage } from "#components/MarkdownMessage";
+import { OutlineNav } from "#components/OutlineNav";
+import { PaperPage } from "#components/PaperPage";
+import { ReadingMode } from "#components/ReadingMode";
+import { useActiveSection } from "#hooks/use-active-section";
 import { extractHeadings } from "#lib/markdown";
+import { scrollToId } from "#lib/scroll";
 
 import { CategoryBreadcrumb } from "./components/CategoryBreadcrumb";
 import { DocumentTypeBadge } from "./components/DocumentBadges";
@@ -28,6 +33,7 @@ export function DocumentPage() {
 
   // Uma janela por vez: Editar e Remover fecham a "Sobre" e devolvem para ela.
   const [modal, setModal] = useState<Modal>(null);
+  const [reading, setReading] = useState(false);
 
   const { data, isLoading, isError } = useDocument(id);
   const archive = useArchiveDocument();
@@ -36,6 +42,9 @@ export function DocumentPage() {
     () => extractHeadings(data?.content ?? ""),
     [data?.content],
   );
+
+  // Título em leitura agora (destacado no sumário).
+  const activeId = useActiveSection(headings.map((heading) => heading.id));
 
   if (isLoading) {
     return (
@@ -50,8 +59,8 @@ export function DocumentPage() {
       <Card>
         <CardContent className="py-10 text-center">
           <ErrorState
-            primaryMessage="Oops! não foi possível abrir o documento."
-            secondaryMessage="Ele pode ter sido removido ou o servidor está indisponível."
+            primaryMessage="Oops! não foi possível abrir a página."
+            secondaryMessage="Ela pode ter sido removida ou o servidor está indisponível."
             actionLabel="Voltar à biblioteca"
             action={() => navigate("/library")}
           />
@@ -71,6 +80,38 @@ export function DocumentPage() {
     });
   }
 
+  if (reading) {
+    return (
+      <ReadingMode
+        title={meta.title}
+        onExit={() => setReading(false)}
+        toc={
+          headings.length > 0 ? (
+            <OutlineNav
+              ariaLabel="Sumário"
+              className="max-h-[70dvh]"
+              items={headings.map((heading) => ({
+                id: heading.id,
+                label: heading.text,
+                level: heading.level,
+              }))}
+              activeId={activeId}
+              onSelect={scrollToId}
+            />
+          ) : null
+        }
+      >
+        <article className="mx-auto max-w-3xl space-y-8">
+          <h1 className="text-center text-3xl font-semibold tracking-tight">
+            {meta.title}
+          </h1>
+
+          <MarkdownMessage content={content} headingIds size="base" />
+        </article>
+      </ReadingMode>
+    );
+  }
+
   return (
     <article className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
@@ -83,24 +124,28 @@ export function DocumentPage() {
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]">
         <div className="min-w-0 space-y-6">
-          <header className="space-y-4 border-b pb-6 pt-8 text-center">
-            <h1 className="text-3xl font-semibold tracking-tight">
-              {meta.title}
-            </h1>
+          <PaperPage>
+            <header className="space-y-4 border-b pb-8 text-center">
+              <h1 className="text-3xl font-semibold tracking-tight">
+                {meta.title}
+              </h1>
 
-            <div className="flex justify-center">
-              <DocumentTypeBadge type={meta.type} />
+              <div className="flex justify-center">
+                <DocumentTypeBadge type={meta.type} />
+              </div>
+            </header>
+
+            <div className="pt-8">
+              <MarkdownMessage content={content} headingIds />
             </div>
-          </header>
-
-          <div className="mx-auto w-full max-w-3xl px-4 sm:px-8">
-            <MarkdownMessage content={content} headingIds />
-          </div>
+          </PaperPage>
         </div>
 
         <DocumentSidebar
           headings={headings}
+          activeId={activeId}
           onOpenAbout={() => setModal("about")}
+          onStartReading={() => setReading(true)}
         />
       </div>
 
@@ -129,7 +174,7 @@ export function DocumentPage() {
         open={modal === "remove"}
         onOpenChange={(open) => setModal(open ? "remove" : "about")}
         title="Remover da biblioteca?"
-        description="O documento deixa de aparecer na biblioteca, mas o arquivo é mantido e pode ser readicionado pela Entrada."
+        description="A página deixa de aparecer na biblioteca, mas o arquivo é mantido e pode ser readicionado pela Entrada."
         confirmLabel="Remover"
         destructive
         isPending={archive.isPending}

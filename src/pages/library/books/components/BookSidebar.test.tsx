@@ -119,3 +119,26 @@ describe("BookSidebar", () => {
     ).toHaveClass("lg:sticky", "lg:top-4", "lg:self-start");
   });
 });
+
+describe("BookSidebar — active chapter", () => {
+  it("when a chapter is being read, should highlight it in the summary", () => {
+    render(
+      <BookSidebar
+        modules={modules}
+        activeChapterId="d2"
+        query=""
+        onQueryChange={() => {}}
+        onSelectChapter={() => {}}
+        onSelectHit={() => {}}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "2. Redes" })).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    expect(
+      screen.getByRole("button", { name: "1. Docker" }),
+    ).not.toHaveAttribute("aria-current");
+  });
+});

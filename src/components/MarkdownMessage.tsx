@@ -4,6 +4,7 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { headingIdsByLine, slugifyHeading } from "#lib/markdown";
+import { cn } from "#lib/utils";
 
 interface MarkdownMessageProps {
   content: string;
@@ -14,6 +15,10 @@ interface MarkdownMessageProps {
    * repetir id (ex.: capítulos de um livro). Só vale com `headingIds`.
    */
   idPrefix?: string;
+  /** Tamanho do texto: `sm` (padrão, chat) ou `base` (leitura em página). */
+  size?: "sm" | "base";
+  /** Classes extras no texto (ex.: tipografia de página). */
+  className?: string;
 }
 
 // Links abrem em nova aba sem vazar o referrer; imagens (por URL) nunca
@@ -81,6 +86,8 @@ export function MarkdownMessage({
   content,
   headingIds,
   idPrefix,
+  size = "sm",
+  className,
 }: MarkdownMessageProps) {
   const mapping = useMemo(
     () =>
@@ -91,7 +98,13 @@ export function MarkdownMessage({
   );
 
   return (
-    <div className="prose prose-sm max-w-none dark:prose-invert">
+    <div
+      className={cn(
+        "prose max-w-none dark:prose-invert",
+        size === "base" ? "prose-base" : "prose-sm",
+        className,
+      )}
+    >
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={mapping}>
         {content}
       </ReactMarkdown>

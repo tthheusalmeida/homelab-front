@@ -167,9 +167,7 @@ describe("BookPage", () => {
     expect(screen.getByText("Capítulo 1")).toBeInTheDocument();
     expect(screen.getByText("Capítulo 2")).toBeInTheDocument();
 
-    await user.click(
-      screen.getAllByRole("link", { name: "Abrir documento" })[0],
-    );
+    await user.click(screen.getAllByRole("link", { name: "Abrir página" })[0]);
 
     expect(screen.getByText("documento aberto")).toBeInTheDocument();
   });
@@ -189,6 +187,15 @@ describe("BookPage", () => {
       "Fim do capítulo 2",
     );
     expect(first).toHaveClass("border-2", "rounded-xl");
+  });
+
+  it("when a chapter is shown, should set its text on a paper page", () => {
+    renderPage();
+
+    const [first] = screen.getAllByRole("region");
+    const page = first.querySelector("[data-slot=paper-page]");
+
+    expect(page).toBeInTheDocument();
   });
 
   it("when a chapter has a next one, should offer a button to go to it", async () => {
@@ -310,6 +317,80 @@ describe("BookPage", () => {
     expect(
       within(screen.getByRole("dialog")).getByText("1. Docker"),
     ).toBeInTheDocument();
+  });
+
+  it("when Modo leitura is clicked, should show only the chapters and the book summary", async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole("button", { name: /Modo leitura/ }));
+
+    const region = screen.getByRole("region", { name: "Modo leitura" });
+
+    expect(within(region).getByText("Capítulo 1")).toBeInTheDocument();
+    expect(
+      within(region).getByRole("navigation", { name: "Sumário do livro" }),
+    ).toBeInTheDocument();
+    expect(
+      within(region).queryByRole("link", { name: "Abrir página" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Organizar/ }),
+    ).not.toBeInTheDocument();
+    expect(document.querySelectorAll("#d1-imagens")).toHaveLength(1);
+  });
+
+  it("when in reading mode, should leave it with the exit button or Escape", async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(screen.getByRole("button", { name: /Modo leitura/ }));
+
+    await user.click(
+      screen.getByRole("button", { name: /Sair do modo leitura/ }),
+    );
+    expect(
+      screen.queryByRole("region", { name: "Modo leitura" }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /Modo leitura/ }));
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("region", { name: "Modo leitura" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when the book has no chapters, should not offer the reading mode", () => {
+    reading.data = { book, modules: [{ id: "m1", title: "", chapters: [] }] };
+    renderPage();
+
+    expect(
+      screen.queryByRole("button", { name: /Modo leitura/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when a chapter is the one being read, should highlight it in the summary", () => {
+    // jsdom não tem layout: simula o capítulo 1 no topo e o 2 lá embaixo.
+    const tops: Record<string, number> = {
+      "chapter-d1": 10,
+      "chapter-d2": 900,
+    };
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
+      function (this: Element) {
+        return { top: tops[this.id] ?? 0 } as DOMRect;
+      },
+    );
+    renderPage();
+
+    const nav = screen.getByRole("navigation", { name: "Sumário do livro" });
+
+    expect(
+      within(nav).getByRole("button", { name: "1. Docker" }),
+    ).toHaveAttribute("aria-current", "location");
+    expect(
+      within(nav).getByRole("button", { name: "2. Redes" }),
+    ).not.toHaveAttribute("aria-current");
+
+    vi.restoreAllMocks();
   });
 
   it("when Organizar is clicked, should open the organizer", async () => {

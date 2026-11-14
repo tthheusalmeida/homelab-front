@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 
@@ -67,7 +67,7 @@ const renderPage = (entries = ["/library/id1"], index?: number) =>
   );
 
 const aboutButton = () =>
-  screen.getByRole("button", { name: /Sobre o documento/ });
+  screen.getByRole("button", { name: /Sobre a página/ });
 
 async function openAbout() {
   const user = userEvent.setup();
@@ -112,7 +112,7 @@ describe("DocumentPage", () => {
     renderPage();
 
     expect(
-      screen.getByText(/não foi possível abrir o documento/),
+      screen.getByText(/não foi possível abrir a página/),
     ).toBeInTheDocument();
     await user.click(
       screen.getByRole("button", { name: /Voltar à biblioteca/ }),
@@ -164,7 +164,7 @@ describe("DocumentPage", () => {
     expect(screen.getByText(/^biblioteca/)).toBeInTheDocument();
   });
 
-  it("when Sobre o documento is clicked, should open the window with status, tags, dates and source", async () => {
+  it("when Sobre a página is clicked, should open the window with status, tags, dates and source", async () => {
     await openAbout();
 
     const dialog = screen.getByRole("dialog");
@@ -196,7 +196,7 @@ describe("DocumentPage", () => {
       await user.click(aboutButton());
 
       expect(
-        screen.getByText("Sobre o documento", { selector: "h2" }),
+        screen.getByText("Sobre a página", { selector: "h2" }),
       ).toBeInTheDocument();
       expect(
         screen.queryByRole("button", { name: "Editar" }),
@@ -212,8 +212,10 @@ describe("DocumentPage", () => {
 
     await user.click(screen.getByRole("button", { name: "Editar" }));
 
-    expect(screen.getByText("Editar documento")).toBeInTheDocument();
-    expect(screen.queryByText("Situação")).not.toBeInTheDocument();
+    expect(screen.getByText("Editar página")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByText("Situação")).not.toBeInTheDocument(),
+    );
   });
 
   it("when the editor is cancelled, should return to the about window", async () => {
@@ -222,7 +224,7 @@ describe("DocumentPage", () => {
 
     await user.click(screen.getByRole("button", { name: "Cancelar" }));
 
-    expect(screen.queryByText("Editar documento")).not.toBeInTheDocument();
+    expect(screen.queryByText("Editar página")).not.toBeInTheDocument();
     expect(screen.getByText("Situação")).toBeInTheDocument();
   });
 
@@ -240,7 +242,7 @@ describe("DocumentPage", () => {
     );
     await user.click(screen.getByRole("button", { name: /Salvar alterações/ }));
 
-    expect(screen.queryByText("Editar documento")).not.toBeInTheDocument();
+    expect(screen.queryByText("Editar página")).not.toBeInTheDocument();
     expect(screen.getByText("Situação")).toBeInTheDocument();
   });
 
@@ -252,7 +254,9 @@ describe("DocumentPage", () => {
     );
 
     expect(screen.getByLabelText("Nome do novo livro")).toBeInTheDocument();
-    expect(screen.queryByText("Situação")).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByText("Situação")).not.toBeInTheDocument(),
+    );
   });
 
   it("when the book picker is closed, should return to the about window", async () => {
@@ -291,7 +295,9 @@ describe("DocumentPage", () => {
     );
 
     expect(screen.getByText("Remover da biblioteca?")).toBeInTheDocument();
-    expect(screen.queryByText("Situação")).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByText("Situação")).not.toBeInTheDocument(),
+    );
     expect(archive.mutate).not.toHaveBeenCalled();
   });
 
@@ -362,23 +368,152 @@ describe("DocumentPage", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("when loaded, should keep the text in a padded reading column", () => {
-    renderPage();
+  it("when loaded, should put title and text on a paper page with margins", () => {
+    const { container } = renderPage();
 
-    const column = screen
-      .getByRole("heading", { name: "Introdução" })
-      .closest("div.max-w-3xl");
+    const page = container.querySelector(
+      "[data-slot=paper-page]",
+    ) as HTMLElement;
 
-    expect(column).toHaveClass("px-4", "sm:px-8");
+    expect(page).toHaveClass("max-w-3xl", "bg-card");
+    expect(
+      within(page).getByRole("heading", {
+        name: "Práticas da Primeira Maneira",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(page).getByRole("heading", { name: "Introdução" }),
+    ).toBeInTheDocument();
   });
 
-  it("when loaded, should center the title block with spacing on top", () => {
+  it("when loaded, should center the title block", () => {
     renderPage();
 
     const header = screen
       .getByRole("heading", { name: "Práticas da Primeira Maneira" })
       .closest("header");
 
-    expect(header).toHaveClass("text-center", "pt-8");
+    expect(header).toHaveClass("text-center");
+  });
+});
+
+describe("DocumentPage — reading mode", () => {
+  beforeEach(() => {
+    const value = detail();
+    value.content = "# Introdução\n\ntexto\n\n## Detalhes\n\nmais texto";
+    documentQuery.data = value;
+    documentQuery.isLoading = false;
+    documentQuery.isError = false;
+  });
+
+  const enterReading = async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(screen.getByRole("button", { name: /Modo leitura/ }));
+
+    return user;
+  };
+
+  it("when Modo leitura is clicked, should show only the title, the text and the summary", async () => {
+    await enterReading();
+
+    const region = screen.getByRole("region", { name: "Modo leitura" });
+
+    expect(
+      within(region).getByRole("heading", {
+        name: "Práticas da Primeira Maneira",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(region).getByRole("heading", { name: "Introdução" }),
+    ).toBeInTheDocument();
+    expect(
+      within(region).getByRole("navigation", { name: "Sumário" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Sobre a página/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Voltar$/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when in reading mode, should not repeat the heading ids of the text", async () => {
+    await enterReading();
+
+    expect(document.querySelectorAll("#detalhes")).toHaveLength(1);
+  });
+
+  it("when a summary item is clicked in reading mode, should scroll to it", async () => {
+    const user = await enterReading();
+    const target = screen.getByRole("heading", { name: "Detalhes", level: 2 });
+    target.scrollIntoView = vi.fn();
+
+    await user.click(
+      within(screen.getByRole("navigation", { name: "Sumário" })).getByRole(
+        "button",
+        { name: "Detalhes" },
+      ),
+    );
+
+    expect(target.scrollIntoView).toHaveBeenCalled();
+  });
+
+  it("when the exit button is clicked, should return to the normal page", async () => {
+    const user = await enterReading();
+
+    await user.click(
+      screen.getByRole("button", { name: /Sair do modo leitura/ }),
+    );
+
+    expect(
+      screen.queryByRole("region", { name: "Modo leitura" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Sobre a página/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("when Escape is pressed, should leave the reading mode", async () => {
+    const user = await enterReading();
+
+    await user.keyboard("{Escape}");
+
+    expect(
+      screen.queryByRole("region", { name: "Modo leitura" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when the text has no headings, should show the reading mode without a summary", async () => {
+    documentQuery.data = detail();
+    (documentQuery.data as { content: string }).content = "só um parágrafo";
+    await enterReading();
+
+    expect(
+      screen.queryByRole("navigation", { name: "Sumário" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("só um parágrafo")).toBeInTheDocument();
+  });
+
+  it("when a heading is the one being read, should highlight it in the summary", () => {
+    // jsdom não tem layout: simula o título 1 no topo e o 2 lá embaixo.
+    const tops: Record<string, number> = { introducao: 10, detalhes: 900 };
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
+      function (this: Element) {
+        return { top: tops[this.id] ?? 0 } as DOMRect;
+      },
+    );
+    renderPage();
+
+    const nav = screen.getByRole("navigation", { name: "Sumário" });
+
+    expect(
+      within(nav).getByRole("button", { name: "Introdução" }),
+    ).toHaveAttribute("aria-current", "location");
+    expect(
+      within(nav).getByRole("button", { name: "Detalhes" }),
+    ).not.toHaveAttribute("aria-current");
+
+    vi.restoreAllMocks();
   });
 });

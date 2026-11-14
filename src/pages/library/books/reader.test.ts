@@ -1,6 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { chapterElementId, headingElementId, hitTargetId } from "./reader";
+import {
+  chapterElementId,
+  goToElement,
+  headingElementId,
+  hitTargetId,
+} from "./reader";
 import type { BookSearchHit } from "./types";
 
 const hit = (line: number): BookSearchHit => ({
@@ -38,5 +43,36 @@ describe("hitTargetId", () => {
 
   it("when the content has no headings, should target the chapter", () => {
     expect(hitTargetId(hit(3), "só texto")).toBe("chapter-d1");
+  });
+});
+
+describe("goToElement", () => {
+  afterEach(() => {
+    document.body.innerHTML = "";
+    vi.useRealTimers();
+  });
+
+  it("when the element exists, should scroll to it and highlight it for a moment", () => {
+    vi.useFakeTimers();
+    const element = document.createElement("h2");
+    element.id = "alvo";
+    element.scrollIntoView = vi.fn();
+    document.body.appendChild(element);
+
+    goToElement("alvo");
+
+    expect(element.scrollIntoView).toHaveBeenCalledWith({
+      behavior: "smooth",
+      block: "start",
+    });
+    expect(element).toHaveClass("bg-primary/15");
+
+    vi.advanceTimersByTime(2000);
+
+    expect(element).not.toHaveClass("bg-primary/15");
+  });
+
+  it("when the element does not exist, should do nothing", () => {
+    expect(() => goToElement("nao-existe")).not.toThrow();
   });
 });
