@@ -1,7 +1,7 @@
 # Home (`pages/home`)
 
 ## Serviços monitorados
-- Lista fixa em `types/services.types.ts`: **HomeLab** (`/health/system`) e **AI** (`/health/ai`), ambos em `http://localhost:3000/api/v1`.
+- Lista fixa em `types/services.types.ts`: **HomeLab** (`/health/system`) e **AI** (`/health/ai`), as URLs são montadas a partir de `VITE_API_URL` (nenhum host fixo no código).
 - Cada serviço é consultado a cada **15 s**, sem retry. Falha de um serviço não afeta os outros.
 
 ## Contadores (`useSystemHealth`)

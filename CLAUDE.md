@@ -34,7 +34,7 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 ## Convenções
 - Aliases por `package.json#imports`: `#components/*`, `#ui/*`, `#lib/*`, `#hooks/*`.
 - Textos de interface em **português**.
-- URLs de API e de serviços vêm de variável de ambiente (`VITE_*` no `.env`), nunca fixas no código. Pendente de migração: as URLs de health em `pages/home/types/services.types.ts` (hoje `http://localhost:3000/...`).
+- URLs de API e de serviços vêm de variável de ambiente (`VITE_*` no `.env`; modelo em `.env.example`), nunca fixas no código. As URLs de health da Home derivam de `VITE_API_URL`.
 - Dados de servidor sempre via TanStack Query (hooks em `hooks/`, chamadas em `api/`); chamadas HTTP passam por `#lib/api`, exceto o health da Home (usa `fetch` direto com URL completa).
 - `jobs` faz polling a cada 1 s; health da Home a cada 15 s.
 

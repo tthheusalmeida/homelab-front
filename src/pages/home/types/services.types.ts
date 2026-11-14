@@ -1,15 +1,17 @@
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const services = [
   {
     name: "HomeLab",
     description: "Back end principal do HomeLab",
-    url: "http://localhost:3000/api/v1/health/system",
-    healthUrl: "http://localhost:3000/api/v1/health/system",
+    url: `${API_URL}/health/system`,
+    healthUrl: `${API_URL}/health/system`,
   },
   {
     name: "AI",
     description: "Serviços de AI",
-    url: "http://localhost:3000/api/v1/health/ai",
-    healthUrl: "http://localhost:3000/api/v1/health/ai",
+    url: `${API_URL}/health/ai`,
+    healthUrl: `${API_URL}/health/ai`,
   },
 ] as const;
 
