@@ -1,12 +1,13 @@
 import { api } from "#lib/api";
 
 import type { JobType } from "../../types/job.types";
+import type { DocumentHints } from "../hints";
 
-export interface CreateVideoToTranscriptParams {
+export interface CreateVideoToTranscriptParams extends DocumentHints {
   url: string;
 }
 
-export interface CreateVideoToSummaryParams {
+export interface CreateVideoToSummaryParams extends DocumentHints {
   url: string;
   providerId: string;
   modelId: string;

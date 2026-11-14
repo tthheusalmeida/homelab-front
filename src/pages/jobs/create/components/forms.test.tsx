@@ -20,6 +20,9 @@ vi.mock("../../../ai/chat/hooks/useAiModels", () => ({
 vi.mock("../../../ai/chat/hooks/useAiThinking", () => ({
   useAiThinking: () => ({ data: [], isLoading: false }),
 }));
+vi.mock("../../../library/hooks/useLibrary", () => ({
+  useCategories: () => ({ data: [] }),
+}));
 
 import { JobForm } from "./JobForm";
 import { JobTypeCard } from "./JobTypeCard";
@@ -50,10 +53,67 @@ describe("VideoToTranscriptForm", () => {
     const user = userEvent.setup();
     render(<VideoToTranscriptForm />);
 
-    await user.type(screen.getByLabelText("URL do vídeo"), "https://x.com/v.mp4");
+    await user.type(
+      screen.getByLabelText("URL do vídeo"),
+      "https://x.com/v.mp4",
+    );
     await user.click(screen.getByRole("button", { name: /criar/i }));
 
     expect(mutate).toHaveBeenCalledWith({ url: "https://x.com/v.mp4" });
+  });
+
+  it("when title, category and tags are filled, should send them with the url", async () => {
+    const user = userEvent.setup();
+    render(<VideoToTranscriptForm />);
+
+    await user.type(
+      screen.getByLabelText("URL do vídeo"),
+      "https://x.com/v.mp4",
+    );
+    await user.type(screen.getByLabelText("Título"), "  Aula 3 ");
+    await user.type(screen.getByLabelText("Categoria"), "Tecnologia");
+    await user.type(screen.getByLabelText("Subcategoria"), "DevOps");
+    await user.type(screen.getByLabelText("Adicionar tag"), "docker{Enter}");
+    await user.click(screen.getByRole("button", { name: /criar/i }));
+
+    expect(mutate).toHaveBeenCalledWith({
+      url: "https://x.com/v.mp4",
+      title: "Aula 3",
+      category: ["Tecnologia", "DevOps"],
+      tags: ["docker"],
+    });
+  });
+
+  it("when the document fields are left empty, should not send title, category or tags", async () => {
+    const user = userEvent.setup();
+    render(<VideoToTranscriptForm />);
+
+    await user.type(screen.getByLabelText("Título"), "   ");
+    await user.type(
+      screen.getByLabelText("URL do vídeo"),
+      "https://x.com/v.mp4",
+    );
+    await user.click(screen.getByRole("button", { name: /criar/i }));
+
+    expect(mutate).toHaveBeenCalledWith({ url: "https://x.com/v.mp4" });
+  });
+
+  it("when the title is empty, should show the default title as placeholder", () => {
+    render(<VideoToTranscriptForm />);
+
+    expect(screen.getByLabelText("Título")).toHaveAttribute(
+      "placeholder",
+      "Se vazio: Transcrição de vídeo",
+    );
+  });
+
+  it("when the mutation is pending, should disable the document fields too", () => {
+    mutationState.isPending = true;
+    render(<VideoToTranscriptForm />);
+
+    expect(screen.getByLabelText("Título")).toBeDisabled();
+    expect(screen.getByLabelText("Categoria")).toBeDisabled();
+    expect(screen.getByLabelText("Adicionar tag")).toBeDisabled();
   });
 
   it("when the url is only whitespace, should keep the submit button disabled", async () => {
@@ -77,7 +137,9 @@ describe("VideoToTranscriptForm", () => {
     mutationState.isError = true;
     render(<VideoToTranscriptForm />);
 
-    expect(screen.getByText(/Não foi possível criar o job/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Não foi possível criar o job/),
+    ).toBeInTheDocument();
   });
 });
 
@@ -92,7 +154,10 @@ describe("VideoToSummaryForm", () => {
     const user = userEvent.setup();
     render(<VideoToSummaryForm />);
 
-    await user.type(screen.getByLabelText("URL do vídeo"), "https://x.com/v.mp4");
+    await user.type(
+      screen.getByLabelText("URL do vídeo"),
+      "https://x.com/v.mp4",
+    );
 
     expect(screen.getByRole("button", { name: /criar/i })).toBeDisabled();
     expect(mutate).not.toHaveBeenCalled();
@@ -102,7 +167,18 @@ describe("VideoToSummaryForm", () => {
     mutationState.isError = true;
     render(<VideoToSummaryForm />);
 
-    expect(screen.getByText(/Não foi possível criar o job/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Não foi possível criar o job/),
+    ).toBeInTheDocument();
+  });
+
+  it("when the title is empty, should show the default summary title as placeholder", () => {
+    render(<VideoToSummaryForm />);
+
+    expect(screen.getByLabelText("Título")).toHaveAttribute(
+      "placeholder",
+      "Se vazio: Resumo de vídeo",
+    );
   });
 
   it("when the mutation is pending, should disable the url input", () => {

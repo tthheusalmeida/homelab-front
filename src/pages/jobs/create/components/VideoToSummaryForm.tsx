@@ -9,11 +9,16 @@ import { Label } from "#ui/label";
 import { useAiModels } from "../../../ai/chat/hooks/useAiModels";
 import { useAiProviders } from "../../../ai/chat/hooks/useAiProviders";
 import { useAiThinking } from "../../../ai/chat/hooks/useAiThinking";
+import { buildDocumentHints } from "../hints";
 import { useCreateVideoToSummary } from "../hooks/useCreateVideoToSummary";
+import { JobDocumentFields } from "./JobDocumentFields";
 import { OptionSelect } from "#components/OptionSelect";
 
 export function VideoToSummaryForm() {
   const [url, setUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [providerId, setProviderId] = useState<string>();
   const [modelId, setModelId] = useState<string>();
   const [thinkingId, setThinkingId] = useState<string>();
@@ -44,6 +49,7 @@ export function VideoToSummaryForm() {
       providerId,
       modelId,
       thinking: thinkingId,
+      ...buildDocumentHints({ title, category, tags }),
     });
   };
 
@@ -116,6 +122,18 @@ export function VideoToSummaryForm() {
           onValueChange={handleThinkingChange}
         />
       </div>
+
+      <JobDocumentFields
+        idPrefix="summary"
+        defaultTitle="Resumo de vídeo"
+        title={title}
+        onTitleChange={setTitle}
+        category={category}
+        onCategoryChange={setCategory}
+        tags={tags}
+        onTagsChange={setTags}
+        disabled={createJob.isPending}
+      />
 
       {createJob.isError && (
         <p className="text-sm text-destructive">

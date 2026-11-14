@@ -1,16 +1,12 @@
 import { useState } from "react";
 
 import { useNavigate } from "react-router";
-import { Eye, Loader2, Pencil } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "#ui/button";
-import { Input } from "#ui/input";
-import { Label } from "#ui/label";
-import { Textarea } from "#ui/textarea";
 
-import { CategoryPicker } from "#components/CategoryPicker";
-import { MarkdownMessage } from "#components/MarkdownMessage";
-import { TagInput } from "#components/TagInput";
+import { DocumentFields } from "#components/DocumentFields";
+import { MarkdownEditor } from "#components/MarkdownEditor";
 
 import { DocumentPreview } from "./components/DocumentPreview";
 import { useCategories, useCreateArticle } from "./hooks/useLibrary";
@@ -22,7 +18,6 @@ export function NewArticlePage() {
   const [category, setCategory] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [content, setContent] = useState("");
-  const [preview, setPreview] = useState(false);
 
   const categories = useCategories();
   const createArticle = useCreateArticle();
@@ -53,38 +48,17 @@ export function NewArticlePage() {
         </p>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="article-title">Título</Label>
-
-        <Input
-          id="article-title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          disabled={createArticle.isPending}
-        />
-      </div>
-
-      <CategoryPicker
-        value={category}
-        onChange={setCategory}
-        options={categories.data ?? []}
+      <DocumentFields
+        idPrefix="article"
+        title={title}
+        onTitleChange={setTitle}
+        category={category}
+        onCategoryChange={setCategory}
+        categoryOptions={categories.data ?? []}
+        tags={tags}
+        onTagsChange={setTags}
         disabled={createArticle.isPending}
       />
-
-      <div className="space-y-2">
-        <Label>Tags</Label>
-
-        <p className="text-sm text-muted-foreground">
-          Etiquetas livres para achar o documento na busca, independentes da
-          pasta. Ex.: docker, prova, revisar.
-        </p>
-
-        <TagInput
-          value={tags}
-          onChange={setTags}
-          disabled={createArticle.isPending}
-        />
-      </div>
 
       <DocumentPreview
         title={title}
@@ -93,45 +67,11 @@ export function NewArticlePage() {
         excerpt={content.replace(/[#*>`|-]/g, "")}
       />
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="article-content">Conteúdo</Label>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setPreview((current) => !current)}
-          >
-            {preview ? <Pencil /> : <Eye />}
-            {preview ? "Editar" : "Prévia"}
-          </Button>
-        </div>
-
-        {preview ? (
-          <div
-            aria-label="Prévia do artigo"
-            className="min-h-64 rounded-md border p-4"
-          >
-            {content.trim() ? (
-              <MarkdownMessage content={content} />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Nada para mostrar ainda.
-              </p>
-            )}
-          </div>
-        ) : (
-          <Textarea
-            id="article-content"
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            disabled={createArticle.isPending}
-            className="min-h-64 font-mono text-sm"
-            placeholder="# Título&#10;&#10;Escreva o conteúdo em Markdown..."
-          />
-        )}
-      </div>
+      <MarkdownEditor
+        value={content}
+        onChange={setContent}
+        disabled={createArticle.isPending}
+      />
 
       {createArticle.isError && (
         <p className="text-sm text-destructive">

@@ -6,17 +6,22 @@ import { Button } from "#ui/button";
 import { Input } from "#ui/input";
 import { Label } from "#ui/label";
 
+import { buildDocumentHints } from "../hints";
 import { useCreateVideoToTranscript } from "../hooks/useCreateVideoToTranscript";
+import { JobDocumentFields } from "./JobDocumentFields";
 
 export function VideoToTranscriptForm() {
   const [url, setUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
 
   const createJob = useCreateVideoToTranscript();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    createJob.mutate({ url });
+    createJob.mutate({ url, ...buildDocumentHints({ title, category, tags }) });
   };
 
   return (
@@ -38,6 +43,18 @@ export function VideoToTranscriptForm() {
           Informe a URL direta do vídeo que deseja transcrever.
         </p>
       </div>
+
+      <JobDocumentFields
+        idPrefix="transcript"
+        defaultTitle="Transcrição de vídeo"
+        title={title}
+        onTitleChange={setTitle}
+        category={category}
+        onCategoryChange={setCategory}
+        tags={tags}
+        onTagsChange={setTags}
+        disabled={createJob.isPending}
+      />
 
       {createJob.isError && (
         <p className="text-sm text-destructive">

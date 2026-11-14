@@ -3,8 +3,6 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "#ui/button";
-import { Input } from "#ui/input";
-import { Label } from "#ui/label";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +12,7 @@ import {
   DialogTitle,
 } from "#ui/dialog";
 
-import { CategoryPicker } from "#components/CategoryPicker";
-import { TagInput } from "#components/TagInput";
+import { DocumentFields } from "#components/DocumentFields";
 
 import { useCategories, usePublishDocument } from "../hooks/useLibrary";
 import { DocumentPreview } from "./DocumentPreview";
@@ -95,38 +92,17 @@ function PublishForm({ document, onDone }: PublishFormProps) {
           }}
         />
 
-        <div className="space-y-2">
-          <Label htmlFor="publish-title">Título</Label>
-
-          <Input
-            id="publish-title"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            disabled={publish.isPending}
-          />
-        </div>
-
-        <CategoryPicker
-          value={category}
-          onChange={setCategory}
-          options={categories.data ?? []}
+        <DocumentFields
+          idPrefix="publish"
+          title={title}
+          onTitleChange={setTitle}
+          category={category}
+          onCategoryChange={setCategory}
+          categoryOptions={categories.data ?? []}
+          tags={tags}
+          onTagsChange={setTags}
           disabled={publish.isPending}
         />
-
-        <div className="space-y-2">
-          <Label>Tags</Label>
-
-          <p className="text-sm text-muted-foreground">
-            Etiquetas livres para achar o documento na busca, independentes da
-            pasta. Ex.: docker, prova, revisar.
-          </p>
-
-          <TagInput
-            value={tags}
-            onChange={setTags}
-            disabled={publish.isPending}
-          />
-        </div>
 
         <DocumentPreview
           title={title}
