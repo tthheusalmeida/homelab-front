@@ -63,6 +63,7 @@ describe("jobs create hooks", () => {
       providerId: "p",
       modelId: "m",
       thinking: "off",
+      detail: "detailed" as const,
     };
 
     await act(async () => {

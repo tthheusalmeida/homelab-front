@@ -94,6 +94,7 @@ describe("VideoToSummaryForm — document fields", () => {
       providerId: "gemini",
       modelId: "m1",
       thinking: "off",
+      detail: "detailed",
       title: "Práticas",
       category: ["Tecnologia"],
       tags: ["devops"],
@@ -116,6 +117,36 @@ describe("VideoToSummaryForm — document fields", () => {
       providerId: "gemini",
       modelId: "m1",
       thinking: "off",
+      detail: "detailed",
     });
+  });
+
+  it("when a detail level is chosen, should send it", async () => {
+    const user = userEvent.setup();
+    render(<VideoToSummaryForm />);
+
+    await user.type(
+      screen.getByLabelText("URL do vídeo"),
+      "https://x.com/v.mp4",
+    );
+    await chooseModel(user);
+    await user.selectOptions(screen.getByLabelText("Nível de detalhe"), "study");
+    await user.click(screen.getByRole("button", { name: /criar/i }));
+
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({ detail: "study" }),
+    );
+  });
+
+  it("when opened, should start on Detalhado and describe the chosen level", async () => {
+    const user = userEvent.setup();
+    render(<VideoToSummaryForm />);
+
+    expect(screen.getByLabelText("Nível de detalhe")).toHaveValue("detailed");
+    expect(screen.getByText(/Mantém conceitos, explicações/)).toBeInTheDocument();
+
+    await user.selectOptions(screen.getByLabelText("Nível de detalhe"), "brief");
+
+    expect(screen.getByText(/Só as ideias essenciais/)).toBeInTheDocument();
   });
 });

@@ -2,6 +2,7 @@ import { api } from "#lib/api";
 
 import type { JobType } from "../../types/job.types";
 import type { DocumentHints } from "../hints";
+import type { SummaryDetail } from "../summary-detail";
 
 export interface CreateVideoToTranscriptParams extends DocumentHints {
   url: string;
@@ -12,6 +13,7 @@ export interface CreateVideoToSummaryParams extends DocumentHints {
   providerId: string;
   modelId: string;
   thinking: string;
+  detail: SummaryDetail;
 }
 
 export async function getJobTypes(): Promise<JobType[]> {

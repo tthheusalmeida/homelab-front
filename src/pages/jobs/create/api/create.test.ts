@@ -36,6 +36,7 @@ describe("jobs create api", () => {
       providerId: "ollama",
       modelId: "m",
       thinking: "off",
+      detail: "detailed" as const,
     };
 
     await createVideoToSummary(params);

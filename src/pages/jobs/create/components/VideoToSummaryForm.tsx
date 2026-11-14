@@ -10,6 +10,12 @@ import { useAiModels } from "../../../ai/chat/hooks/useAiModels";
 import { useAiProviders } from "../../../ai/chat/hooks/useAiProviders";
 import { useAiThinking } from "../../../ai/chat/hooks/useAiThinking";
 import { buildDocumentHints } from "../hints";
+import {
+  DEFAULT_SUMMARY_DETAIL,
+  isSummaryDetail,
+  summaryDetailOptions,
+  type SummaryDetail,
+} from "../summary-detail";
 import { useCreateVideoToSummary } from "../hooks/useCreateVideoToSummary";
 import { JobDocumentFields } from "./JobDocumentFields";
 import { OptionSelect } from "#components/OptionSelect";
@@ -22,6 +28,7 @@ export function VideoToSummaryForm() {
   const [providerId, setProviderId] = useState<string>();
   const [modelId, setModelId] = useState<string>();
   const [thinkingId, setThinkingId] = useState<string>();
+  const [detail, setDetail] = useState<SummaryDetail>(DEFAULT_SUMMARY_DETAIL);
 
   const { data: providers = [], isLoading: isLoadingProviders } =
     useAiProviders();
@@ -49,6 +56,7 @@ export function VideoToSummaryForm() {
       providerId,
       modelId,
       thinking: thinkingId,
+      detail,
       ...buildDocumentHints({ title, category, tags }),
     });
   };
@@ -121,6 +129,28 @@ export function VideoToSummaryForm() {
           disabled={!modelId || isLoadingThinking || createJob.isPending}
           onValueChange={handleThinkingChange}
         />
+      </div>
+
+      <div className="space-y-2">
+        <OptionSelect
+          value={detail}
+          options={summaryDetailOptions}
+          placeholder="Nível de detalhe"
+          label="Nível de detalhe"
+          triggerWidth="w-48"
+          contentWidth="w-52"
+          disabled={createJob.isPending}
+          onValueChange={(value) =>
+            setDetail(isSummaryDetail(value) ? value : DEFAULT_SUMMARY_DETAIL)
+          }
+        />
+
+        <p className="text-sm text-muted-foreground">
+          {
+            summaryDetailOptions.find((option) => option.id === detail)
+              ?.description
+          }
+        </p>
       </div>
 
       <JobDocumentFields

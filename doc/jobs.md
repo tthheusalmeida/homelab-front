@@ -19,7 +19,8 @@
 ### Resumo
 - Além da URL, exige provider, modelo e thinking (reaproveita os selects do chat). Sem os três escolhidos o botão fica desabilitado e nada é enviado.
 - Trocar provider limpa modelo e thinking; trocar modelo limpa thinking. **Aqui não há valor padrão**: o usuário precisa escolher.
-- Envia `POST /jobs/video-to-summary` com `{ url, providerId, modelId, thinking }`.
+- **Nível de detalhe** (select, padrão **Detalhado**): Resumo curto, Detalhado (mantém conceitos, explicações, comandos e exemplos) e Estudo completo (material de consulta organizado; aulas longas são resumidas em partes). Uma frase abaixo do select descreve o nível escolhido.
+- Envia `POST /jobs/video-to-summary` com `{ url, providerId, modelId, thinking, detail }` (mais título, categoria e tags se preenchidos).
 - Durante a criação, campos e botão ficam desabilitados.
 
 ## Acompanhar (`/jobs/track`)
