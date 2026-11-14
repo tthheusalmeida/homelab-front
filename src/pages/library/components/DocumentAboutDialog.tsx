@@ -43,7 +43,7 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /**
- * Janela "Sobre o documento": informações separadas por rótulo e, em documento
+ * Janela "Sobre a página": informações separadas por rótulo e, em documento
  * publicado, as ações Editar e Remover (cada uma abre a sua própria janela).
  */
 export function DocumentAboutDialog({
@@ -58,7 +58,7 @@ export function DocumentAboutDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Sobre o documento</DialogTitle>
+          <DialogTitle>Sobre a página</DialogTitle>
         </DialogHeader>
 
         <dl className="space-y-4">

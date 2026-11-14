@@ -170,9 +170,7 @@ describe("DocumentCard", () => {
       expect(screen.getByText("Resumo")).toBeInTheDocument();
       expect(screen.getByText("DevOps")).toBeInTheDocument();
       expect(screen.getByText(/05\/03\/2026/)).toBeInTheDocument();
-      expect(
-        screen.queryByText("Resumo do conteúdo"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Resumo do conteúdo")).not.toBeInTheDocument();
     });
 
     it("when matched by content, should say so", () => {

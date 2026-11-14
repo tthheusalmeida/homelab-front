@@ -65,7 +65,7 @@ export function DocumentFields({
         <Label>Tags</Label>
 
         <p className="text-sm text-muted-foreground">
-          Etiquetas livres para achar o documento na busca, independentes da
+          Etiquetas livres para achar a página na busca, independentes da
           pasta. Ex.: docker, prova, revisar.
         </p>
 

@@ -265,7 +265,7 @@ describe("MarkdownEditor — splitPreview", () => {
     render(<MarkdownEditor value={"# Olá"} onChange={() => {}} splitPreview />);
 
     expect(editor()).toBeInTheDocument();
-    expect(screen.getByLabelText("Prévia do artigo")).toHaveTextContent("Olá");
+    expect(screen.getByLabelText("Prévia da página")).toHaveTextContent("Olá");
     expect(
       screen.queryByRole("button", { name: "Prévia" }),
     ).not.toBeInTheDocument();
@@ -274,6 +274,6 @@ describe("MarkdownEditor — splitPreview", () => {
   it("when splitPreview is off, should hide the preview until toggled", () => {
     render(<MarkdownEditor value={"# Olá"} onChange={() => {}} />);
 
-    expect(screen.queryByLabelText("Prévia do artigo")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Prévia da página")).not.toBeInTheDocument();
   });
 });

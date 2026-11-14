@@ -54,7 +54,7 @@ describe("DocumentAboutDialog", () => {
   it("when closed, should render nothing", () => {
     renderDialog({ open: false });
 
-    expect(screen.queryByText("Sobre o documento")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sobre a página")).not.toBeInTheDocument();
   });
 
   it("when the document has tags, should list each one", () => {

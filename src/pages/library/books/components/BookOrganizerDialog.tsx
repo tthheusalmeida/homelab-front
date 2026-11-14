@@ -169,7 +169,7 @@ function Organizer({
 
         <DialogDescription>
           Arraste capítulos e módulos pelo ícone para mudar a ordem, inclusive
-          de um módulo para outro. Um documento só aparece uma vez no livro.
+          de um módulo para outro. Uma página só aparece uma vez no livro.
         </DialogDescription>
       </DialogHeader>
 
@@ -289,7 +289,7 @@ function Organizer({
                     {module.documentIds.map((documentId, chapterIndex) => {
                       chapterNumber += 1;
                       const info = known.get(documentId);
-                      const title = info?.title ?? "Documento indisponível";
+                      const title = info?.title ?? "Página indisponível";
                       const markBefore =
                         chapterTarget && over.index === chapterIndex;
                       const markAfter =
@@ -379,8 +379,8 @@ function Organizer({
           })}
         </section>
 
-        <section aria-label="Adicionar documentos" className="space-y-3">
-          <h3 className="text-sm font-semibold">Adicionar documentos</h3>
+        <section aria-label="Adicionar páginas" className="space-y-3">
+          <h3 className="text-sm font-semibold">Adicionar páginas</h3>
 
           <SearchInput
             value={search}
@@ -392,7 +392,7 @@ function Organizer({
             <p className="text-sm text-muted-foreground">
               {documents.isLoading
                 ? "Carregando..."
-                : "Nenhum documento disponível para adicionar."}
+                : "Nenhuma página disponível para adicionar."}
             </p>
           ) : (
             <ul className="max-h-[60dvh] space-y-1 overflow-y-auto pr-1">

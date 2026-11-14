@@ -128,8 +128,8 @@ function BookForm({
         <DialogTitle>{book ? "Editar livro" : "Novo livro"}</DialogTitle>
 
         <DialogDescription>
-          O livro reúne documentos que você já tem da biblioteca, em ordem. O
-          texto continua nos documentos.
+          O livro reúne páginas que você já tem da biblioteca, em ordem. O texto
+          continua nas páginas.
         </DialogDescription>
       </DialogHeader>
 

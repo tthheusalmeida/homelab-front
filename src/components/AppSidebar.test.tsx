@@ -41,16 +41,16 @@ describe("AppSidebar", () => {
   it("when rendered, should list the library items", () => {
     renderSidebar();
 
-    for (const title of ["Acervo", "Livros", "Entrada", "Novo artigo"]) {
+    for (const title of ["Páginas", "Livros", "Entrada", "Nova página"]) {
       expect(screen.getByRole("button", { name: title })).toBeInTheDocument();
     }
   });
 
   it.each([
-    ["Acervo", "/library"],
+    ["Páginas", "/library"],
     ["Livros", "/library/books"],
     ["Entrada", "/library/inbox"],
-    ["Novo artigo", "/library/new"],
+    ["Nova página", "/library/new"],
   ])("when %s is clicked, should navigate to %s", async (title, path) => {
     const user = userEvent.setup();
     renderSidebar();
@@ -67,7 +67,7 @@ describe("AppSidebar", () => {
       "data-active",
     );
     expect(
-      screen.getByRole("button", { name: "Acervo" }),
+      screen.getByRole("button", { name: "Páginas" }),
     ).not.toHaveAttribute("data-active");
   });
 });

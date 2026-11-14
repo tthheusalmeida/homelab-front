@@ -24,11 +24,11 @@ export function JobDocumentFields({
 
   return (
     <section
-      aria-label="Dados do documento"
+      aria-label="Dados da página"
       className="space-y-4 rounded-md border border-dashed p-4"
     >
       <p className="text-sm text-muted-foreground">
-        Opcional. O que você preencher já vem pronto quando o documento aparecer
+        Opcional. O que você preencher já vem pronto quando a página aparecer
         na Entrada; dá para ajustar na hora de adicionar à biblioteca.
       </p>
 

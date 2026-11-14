@@ -103,8 +103,12 @@ describe("InboxPage", () => {
 
     expect(screen.getByText("Transcrição A")).toBeInTheDocument();
     expect(screen.getByText("Resumo B")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Pendentes (2)" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Removidos (1)" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Pendentes (2)" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Removidos (1)" }),
+    ).toBeInTheDocument();
   });
 
   it("when loading, should show the loading state", () => {
@@ -143,7 +147,9 @@ describe("InboxPage", () => {
 
     expect(screen.getByText("Antigo C")).toBeInTheDocument();
     expect(screen.queryByText("Transcrição A")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Readicionar/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Readicionar/ }),
+    ).toBeInTheDocument();
   });
 
   it("when nothing was removed, should show its own empty state", async () => {
@@ -153,7 +159,7 @@ describe("InboxPage", () => {
 
     await user.click(screen.getByRole("button", { name: /Removidos/ }));
 
-    expect(screen.getByText("Nenhum documento removido")).toBeInTheDocument();
+    expect(screen.getByText("Nenhuma página removida")).toBeInTheDocument();
   });
 
   it("when add is clicked on a pending document, should open the publish dialog for it", async () => {
@@ -164,7 +170,9 @@ describe("InboxPage", () => {
       screen.getAllByRole("button", { name: /Adicionar à biblioteca/ })[0],
     );
 
-    expect(screen.getByRole("dialog")).toHaveTextContent("publicar:Transcrição A");
+    expect(screen.getByRole("dialog")).toHaveTextContent(
+      "publicar:Transcrição A",
+    );
   });
 
   it("when the publish dialog is closed, should hide it", async () => {
@@ -186,7 +194,7 @@ describe("InboxPage", () => {
     await user.click(screen.getAllByRole("button", { name: /Descartar/ })[0]);
 
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("Descartar documento?")).toBeInTheDocument();
+    expect(within(dialog).getByText("Descartar página?")).toBeInTheDocument();
     expect(dialog).toHaveTextContent("Transcrição A");
     expect(discard.mutate).not.toHaveBeenCalled();
   });
@@ -200,12 +208,14 @@ describe("InboxPage", () => {
     await user.click(screen.getAllByRole("button", { name: /Descartar/ })[0]);
 
     await user.click(
-      within(screen.getByRole("dialog")).getByRole("button", { name: "Descartar" }),
+      within(screen.getByRole("dialog")).getByRole("button", {
+        name: "Descartar",
+      }),
     );
 
     expect(discard.mutate).toHaveBeenCalledWith("1", expect.any(Object));
     await waitFor(() =>
-      expect(screen.queryByText("Descartar documento?")).not.toBeInTheDocument(),
+      expect(screen.queryByText("Descartar página?")).not.toBeInTheDocument(),
     );
   });
 

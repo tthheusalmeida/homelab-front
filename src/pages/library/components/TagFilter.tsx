@@ -104,7 +104,7 @@ export function TagFilter({
             <DialogTitle>Todas as tags</DialogTitle>
 
             <DialogDescription>
-              Escolha uma ou mais tags para filtrar os documentos.
+              Escolha uma ou mais tags para filtrar as páginas.
             </DialogDescription>
           </DialogHeader>
 

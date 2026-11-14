@@ -226,7 +226,7 @@ export function MarkdownEditor({
 
         {(preview || splitPreview) && (
           <div
-            aria-label="Prévia do artigo"
+            aria-label="Prévia da página"
             className={
               splitPreview
                 ? "min-h-64 overflow-auto rounded-md border p-4 lg:sticky lg:top-4 lg:h-[65dvh] lg:self-start"

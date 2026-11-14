@@ -74,10 +74,9 @@ const doc = (id: string, title: string) => ({
 });
 
 const lastFilters = () =>
-  useDocumentsSpy.mock.calls[useDocumentsSpy.mock.calls.length - 1][0] as Record<
-    string,
-    unknown
-  >;
+  useDocumentsSpy.mock.calls[
+    useDocumentsSpy.mock.calls.length - 1
+  ][0] as Record<string, unknown>;
 
 const renderPage = () =>
   render(
@@ -117,7 +116,9 @@ describe("LibraryPage", () => {
   it("when opened with a category in the navigation state, should filter by it", () => {
     render(
       <MemoryRouter
-        initialEntries={[{ pathname: "/library", state: { category: ["Ciência"] } }]}
+        initialEntries={[
+          { pathname: "/library", state: { category: ["Ciência"] } },
+        ]}
       >
         <LibraryPage />
       </MemoryRouter>,
@@ -146,7 +147,9 @@ describe("LibraryPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    expect(screen.getByText(/falha ao carregar a biblioteca/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/falha ao carregar a biblioteca/),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /Tentar novamente/ }));
 
     expect(documents.refetch).toHaveBeenCalledOnce();
@@ -157,7 +160,7 @@ describe("LibraryPage", () => {
 
     expect(screen.getByText("Docker")).toBeInTheDocument();
     expect(screen.getByText("Kubernetes")).toBeInTheDocument();
-    expect(screen.getByText("2 documento(s)")).toBeInTheDocument();
+    expect(screen.getByText("2 página(s)")).toBeInTheDocument();
   });
 
   it("when the library is empty and there are no filters, should invite going to the inbox", () => {
@@ -165,10 +168,9 @@ describe("LibraryPage", () => {
     renderPage();
 
     expect(screen.getByText("A biblioteca está vazia")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Ir para a Entrada/ })).toHaveAttribute(
-      "href",
-      "/library/inbox",
-    );
+    expect(
+      screen.getByRole("link", { name: /Ir para a Entrada/ }),
+    ).toHaveAttribute("href", "/library/inbox");
   });
 
   it("when a search has no results, should say so and offer to clear the filters", async () => {
@@ -176,11 +178,15 @@ describe("LibraryPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.click(screen.getByRole("button", { name: "Todas as categorias" }));
+    await user.click(
+      screen.getByRole("button", { name: "Todas as categorias" }),
+    );
     await user.click(screen.getByRole("button", { name: /^Ciência/ }));
 
     expect(screen.getByText("Nenhum resultado encontrado")).toBeInTheDocument();
-    expect(screen.queryByText("A biblioteca está vazia")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("A biblioteca está vazia"),
+    ).not.toBeInTheDocument();
   });
 
   it("when the first render happens, should query without filters and sorted by title", () => {
@@ -261,7 +267,9 @@ describe("LibraryPage", () => {
   it("when filters are active, should show Limpar filtros and reset everything", async () => {
     const user = userEvent.setup();
     renderPage();
-    expect(screen.queryByRole("button", { name: "Limpar filtros" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Limpar filtros" }),
+    ).not.toBeInTheDocument();
 
     await user.selectOptions(screen.getByLabelText("Tipo"), "summary");
     await user.click(screen.getByRole("button", { name: /devops/ }));

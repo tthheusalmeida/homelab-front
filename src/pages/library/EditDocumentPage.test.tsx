@@ -87,7 +87,7 @@ describe("EditDocumentPage", () => {
 
       expect(
         screen.getByText(
-          /Só é possível editar documentos que estão na biblioteca/,
+          /Só é possível editar páginas que estão na biblioteca/,
         ),
       ).toBeInTheDocument();
       expect(screen.queryByLabelText("Título")).not.toBeInTheDocument();

@@ -76,7 +76,7 @@ function PublishForm({ document, onDone }: PublishFormProps) {
 
         <DialogDescription>
           Escolha a pasta (categoria, até 4 níveis) e as tags. Abaixo você vê
-          como o documento vai aparecer.
+          como a página vai aparecer.
         </DialogDescription>
       </DialogHeader>
 

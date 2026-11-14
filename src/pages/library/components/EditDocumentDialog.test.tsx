@@ -38,9 +38,9 @@ describe("EditDocumentDialog", () => {
       <EditDocumentDialog open onOpenChange={() => {}} document={original} />,
     );
 
-    expect(screen.getByText("Editar documento")).toBeInTheDocument();
+    expect(screen.getByText("Editar página")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Práticas")).toBeInTheDocument();
-    expect(screen.getByLabelText("Prévia do artigo")).toBeInTheDocument();
+    expect(screen.getByLabelText("Prévia da página")).toBeInTheDocument();
   });
 
   it("when open, should take the whole screen", () => {
@@ -60,7 +60,7 @@ describe("EditDocumentDialog", () => {
       />,
     );
 
-    expect(screen.queryByText("Editar documento")).not.toBeInTheDocument();
+    expect(screen.queryByText("Editar página")).not.toBeInTheDocument();
   });
 
   it("when Cancelar is clicked, should ask to close", async () => {

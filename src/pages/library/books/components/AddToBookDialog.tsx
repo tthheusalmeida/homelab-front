@@ -38,7 +38,7 @@ export function AddToBookDialog({
           <DialogTitle>Adicionar a um livro</DialogTitle>
 
           <DialogDescription>
-            O documento entra no fim do livro; depois você pode mudar a ordem em
+            A página entra no fim do livro; depois você pode mudar a ordem em
             Organizar.
           </DialogDescription>
         </DialogHeader>

@@ -115,11 +115,11 @@ export function LibraryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Biblioteca</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Páginas</h1>
 
         <p className="text-sm text-muted-foreground">
           Seus conhecimentos organizados por tema. Pesquise por título, tags,
-          categorias ou pelo texto dos documentos.
+          categorias ou pelo texto das páginas.
         </p>
       </div>
 
@@ -202,7 +202,7 @@ export function LibraryPage() {
           />
         </aside>
 
-        <section aria-label="Documentos" className="space-y-3">
+        <section aria-label="Páginas" className="space-y-3">
           {documents.data.length === 0 ? (
             hasFilters ? (
               <EmptyState
@@ -219,7 +219,7 @@ export function LibraryPage() {
               <EmptyState
                 icon={LibraryIcon}
                 title="A biblioteca está vazia"
-                description="Adicione resumos e transcrições da Entrada ou escreva um artigo."
+                description="Adicione resumos e transcrições da Entrada ou escreva uma página."
                 action={
                   <Link
                     to="/library/inbox"
@@ -233,7 +233,7 @@ export function LibraryPage() {
           ) : (
             <>
               <p className="text-xs text-muted-foreground">
-                {documents.data.length} documento(s)
+                {documents.data.length} página(s)
               </p>
 
               <div

@@ -28,8 +28,8 @@ export function EditDocumentPage() {
       <Card>
         <CardContent className="py-10 text-center">
           <ErrorState
-            primaryMessage="Oops! não foi possível abrir o documento."
-            secondaryMessage="Ele pode ter sido removido ou o servidor está indisponível."
+            primaryMessage="Oops! não foi possível abrir a página."
+            secondaryMessage="Ela pode ter sido removida ou o servidor está indisponível."
             actionLabel="Voltar à biblioteca"
             action={() => navigate("/library")}
           />
@@ -43,9 +43,9 @@ export function EditDocumentPage() {
       <Card>
         <CardContent className="py-10 text-center">
           <ErrorState
-            primaryMessage="Só é possível editar documentos que estão na biblioteca."
-            secondaryMessage="Readicione o documento pela Entrada para editá-lo."
-            actionLabel="Voltar ao documento"
+            primaryMessage="Só é possível editar páginas que estão na biblioteca."
+            secondaryMessage="Readicione a página pela Entrada para editá-la."
+            actionLabel="Voltar à página"
             action={() => navigate(`/library/${data.meta.id}`)}
           />
         </CardContent>
@@ -62,9 +62,7 @@ function EditForm({ document }: { document: DocumentDetail }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Editar documento
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Editar página</h1>
 
         <p className="text-sm text-muted-foreground">
           Mudar título ou categoria também renomeia ou move o arquivo. Use

@@ -382,7 +382,7 @@ describe("BookOrganizerDialog", () => {
     setup();
 
     expect(
-      screen.getByText("Nenhum documento disponível para adicionar."),
+      screen.getByText("Nenhuma página disponível para adicionar."),
     ).toBeInTheDocument();
   });
 

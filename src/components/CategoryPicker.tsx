@@ -77,7 +77,7 @@ export function CategoryPicker({
   return (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground">
-        A categoria é a <strong>pasta</strong> onde o documento fica guardado,
+        A categoria é a <strong>pasta</strong> onde a página fica guardada,
         do mais amplo ao mais específico. Cada campo é um nível dentro do
         anterior. Ex.: Ciência › Química › Ligações. Para assuntos soltos que
         cruzam pastas, use as tags.

@@ -61,8 +61,8 @@ export function InboxPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Entrada</h1>
 
           <p className="text-sm text-muted-foreground">
-            Resumos e transcrições gerados. Decida o que entra na biblioteca e
-            o que é descartado.
+            Resumos e transcrições gerados. Decida o que entra na biblioteca e o
+            que é descartado.
           </p>
         </div>
 
@@ -72,7 +72,9 @@ export function InboxPage() {
           disabled={reindex.isPending}
           onClick={() => reindex.mutate()}
         >
-          <RefreshCw className={reindex.isPending ? "animate-spin" : undefined} />
+          <RefreshCw
+            className={reindex.isPending ? "animate-spin" : undefined}
+          />
           Reindexar
         </Button>
       </div>
@@ -124,7 +126,7 @@ export function InboxPage() {
         <Card>
           <CardContent className="py-10 text-center">
             <ErrorState
-              primaryMessage="Oops! houve uma falha ao carregar os documentos."
+              primaryMessage="Oops! houve uma falha ao carregar as páginas."
               secondaryMessage="Tente novamente mais tarde."
               action={() => void current.refetch()}
             />
@@ -148,8 +150,8 @@ export function InboxPage() {
         ) : (
           <EmptyState
             icon={Trash2}
-            title="Nenhum documento removido"
-            description="Documentos removidos da biblioteca ficam aqui e podem ser readicionados."
+            title="Nenhuma página removida"
+            description="Páginas removidas da biblioteca ficam aqui e podem ser readicionados."
           />
         )
       ) : (
@@ -197,8 +199,8 @@ export function InboxPage() {
             setDiscardTarget(null);
           }
         }}
-        title="Descartar documento?"
-        description={`"${discardTarget?.title ?? ""}" será apagado definitivamente. Essa ação não pode ser desfeita.`}
+        title="Descartar página?"
+        description={`"${discardTarget?.title ?? ""}" será apagada definitivamente. Essa ação não pode ser desfeita.`}
         confirmLabel="Descartar"
         destructive
         isPending={discard.isPending}

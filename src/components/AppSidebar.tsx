@@ -38,7 +38,7 @@ const navigation = [
     label: "Biblioteca",
     items: [
       {
-        title: "Acervo",
+        title: "Páginas",
         url: "/library",
         icon: Library,
       },
@@ -53,7 +53,7 @@ const navigation = [
         icon: Inbox,
       },
       {
-        title: "Novo artigo",
+        title: "Nova página",
         url: "/library/new",
         icon: FilePlus,
       },

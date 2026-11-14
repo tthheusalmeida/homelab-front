@@ -50,7 +50,7 @@ export function BooksPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Livros</h1>
 
           <p className="text-sm text-muted-foreground">
-            Reúna documentos em ordem para ler como um livro e pesquisar dentro
+            Reúna páginas em ordem para ler como um livro e pesquisar dentro
             dele.
           </p>
         </div>
