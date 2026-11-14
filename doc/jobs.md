@@ -15,6 +15,7 @@
 - O título vazio mostra o padrão como dica ("Se vazio: Transcrição de vídeo" / "Se vazio: Resumo de vídeo").
 - O envio inclui `title`, `category` e `tags` **somente se preenchidos** (título aparado, níveis em branco descartados); vazios ficam de fora do corpo da requisição. Campos ficam desabilitados durante a criação.
 - O diálogo de criação tem altura máxima de 90% da tela e rola por dentro.
+- **Ao criar o job com sucesso, a janela fecha e o formulário é descartado**: a próxima abertura começa limpa (URL, título, categoria, tags e modelo vazios). Assim não há como criar dois jobs iguais reenviando o mesmo formulário. Antes de fechar, o formulário já fica travado (campos e botão desabilitados) e ignora novos envios; se a criação falhar, a janela continua aberta e editável, com o erro. Depois de fechar, a tela Criar mostra o aviso "Job criado: <tipo>" com o botão "Acompanhar" (vai para `/jobs/track`) e "Dispensar"; o aviso some ao abrir outro tipo.
 
 ### Resumo
 - Além da URL, exige provider, modelo e thinking (reaproveita os selects do chat). Sem os três escolhidos o botão fica desabilitado e nada é enviado.

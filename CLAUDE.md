@@ -26,10 +26,10 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 - `app/router.tsx` + `app/layouts/AppLayout.tsx` — rotas: `/`, `/library`, `/library/inbox`, `/library/new`, `/library/books`, `/library/books/:bookId`, `/library/:id`, `/library/:id/edit`, `/ai/chat`, `/ai/usage`, `/jobs/create`, `/jobs/track`
 - `pages/<área>/` — cada página segue `Page.tsx`, `api/` (chamadas HTTP), `hooks/` (TanStack Query), `components/`, `types/`
   - `home/`, `library/`, `ai/chat/`, `ai/usage/`, `jobs/create/`, `jobs/track/` (+ `jobs/types`)
-- `components/` — componentes base compartilhados (`ErrorState`, `LoadingState`, `EmptyState`, `MarkdownMessage`, `OptionSelect`, `SearchInput`, `TagInput`, `CategoryPicker`, `DocumentFields`, `MarkdownEditor`, `PaperPage`, `OutlineNav`, `ReadingMode`, `ConfirmDialog`, `ClockAndTime`, `AppSidebar`)
+- `components/` — componentes base compartilhados (`ErrorState`, `LoadingState`, `EmptyState`, `MarkdownMessage`, `OptionSelect`, `SearchInput`, `TagInput`, `CategoryPicker`, `DocumentFields`, `MarkdownEditor`, `PaperPage`, `OutlineNav`, `ReadingMode`, `BackToTopButton`, `ReadingSection`, `ConfirmDialog`, `ClockAndTime`, `AppSidebar`)
 - `ui/` — apenas primitivos shadcn/base-ui (não alterar sem necessidade; componentes base próprios vão em `components/`)
-- `lib/` — `api.ts`, `scroll.ts`, `format.ts`, `queryClient.ts`, `utils.ts` (`cn`)
-- `hooks/` — `use-mobile.ts`, `use-debounced-value.ts`, `use-stored-state.ts`, `use-active-section.ts`
+- `lib/` — `api.ts`, `scroll.ts`, `find.ts`, `format.ts`, `queryClient.ts`, `utils.ts` (`cn`)
+- `hooks/` — `use-mobile.ts`, `use-debounced-value.ts`, `use-stored-state.ts`, `use-active-section.ts`, `use-text-highlight.ts`, `use-back-to-top.ts`
 - `test/` — `setup.ts` (jest-dom, polyfills de jsdom) e `utils.tsx` (`createWrapper`, `renderWithQuery`)
 
 ## Convenções
