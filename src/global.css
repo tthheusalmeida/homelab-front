@@ -136,3 +136,157 @@
     @apply font-sans;
   }
 }
+
+/* Confete da comemoração de livro concluído. */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(26rem) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [style*="confetti-fall"] {
+    animation: none !important;
+  }
+}
+
+/* Destaque dos termos achados na busca do livro (CSS Custom Highlight API). */
+::highlight(find-match) {
+  background-color: oklch(0.85 0.17 95 / 0.55);
+  color: inherit;
+}
+
+::highlight(find-current) {
+  background-color: oklch(0.75 0.18 55);
+  color: black;
+}
+
+/* Exportar livro em PDF: a versão de impressão só aparece ao imprimir. */
+#print-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  body.printing-book > *:not(#print-root) {
+    display: none !important;
+  }
+
+  body.printing-book {
+    background: white !important;
+  }
+
+  body.printing-book #print-root {
+    display: block !important;
+    background: white;
+    color: #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Texto sempre escuro sobre branco, mesmo se o app estiver no tema escuro. */
+  body.printing-book #print-root .prose {
+    --tw-prose-body: #111;
+    --tw-prose-headings: #000;
+    --tw-prose-bold: #000;
+    --tw-prose-links: #1d4ed8;
+    --tw-prose-code: #000;
+    --tw-prose-quotes: #111;
+    --tw-prose-quote-borders: #bbb;
+    --tw-prose-counters: #444;
+    --tw-prose-bullets: #444;
+    --tw-prose-hr: #ccc;
+    --tw-prose-th-borders: #bbb;
+    --tw-prose-td-borders: #ddd;
+    --tw-prose-pre-bg: #f3f4f6;
+    --tw-prose-pre-code: #111;
+    --tw-prose-captions: #444;
+  }
+
+  #print-root .print-cover {
+    break-after: page;
+    padding-top: 3cm;
+    text-align: center;
+  }
+
+  #print-root .print-description {
+    margin: 1.5cm auto 0;
+    max-width: 14cm;
+    font-size: 12pt;
+  }
+
+  #print-root .print-date {
+    margin-top: 1cm;
+    font-size: 9pt;
+    color: #555;
+  }
+
+  #print-root .print-toc {
+    break-after: page;
+  }
+
+  #print-root .print-toc h1 {
+    margin-bottom: 0.8cm;
+    font-size: 22pt;
+    font-weight: 700;
+  }
+
+  #print-root .print-toc ol {
+    list-style: none;
+    padding: 0;
+  }
+
+  #print-root .print-toc li {
+    margin: 0.15cm 0;
+  }
+
+  #print-root .print-toc li li {
+    margin-left: 0.8cm;
+  }
+
+  #print-root .print-module {
+    break-before: page;
+    break-after: avoid;
+    margin: 0 0 1cm;
+    font-size: 24pt;
+    font-weight: 700;
+  }
+
+  #print-root .print-chapter {
+    break-before: page;
+  }
+
+  #print-root .print-module + .print-chapter {
+    break-before: avoid;
+  }
+
+  #print-root .print-chapter-label {
+    margin-bottom: 0.6cm;
+    border-bottom: 1px solid #bbb;
+    padding-bottom: 0.2cm;
+    font-size: 9pt;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #555;
+  }
+
+  #print-root h1,
+  #print-root h2,
+  #print-root h3 {
+    break-after: avoid;
+  }
+
+  #print-root pre,
+  #print-root table,
+  #print-root img {
+    break-inside: avoid;
+  }
+}

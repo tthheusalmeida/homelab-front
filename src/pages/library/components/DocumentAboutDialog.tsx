@@ -56,7 +56,7 @@ export function DocumentAboutDialog({
 }: DocumentAboutDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Sobre a página</DialogTitle>
         </DialogHeader>
@@ -101,7 +101,7 @@ export function DocumentAboutDialog({
         </dl>
 
         {(onEdit || onRemove || onAddToBook) && (
-          <DialogFooter>
+          <DialogFooter className="sm:flex-wrap">
             {onAddToBook && (
               <Button variant="outline" onClick={onAddToBook}>
                 <BookPlus /> Adicionar a um livro

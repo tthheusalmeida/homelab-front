@@ -10,6 +10,8 @@ interface ReadingModeProps {
   title: string;
   /** Sumário que fica na lateral. */
   toc: ReactNode;
+  /** Controles na barra de cima (ex.: busca no texto). */
+  actions?: ReactNode;
   /** O texto a ler. */
   children: ReactNode;
   onExit: () => void;
@@ -23,6 +25,7 @@ interface ReadingModeProps {
 export function ReadingMode({
   title,
   toc,
+  actions,
   children,
   onExit,
 }: ReadingModeProps) {
@@ -45,7 +48,9 @@ export function ReadingMode({
       className="fixed inset-0 z-50 overflow-y-auto bg-background"
     >
       <div className="sticky top-0 z-10 flex h-14 items-center justify-between gap-3 border-b bg-background px-4">
-        <p className="min-w-0 truncate text-sm font-medium">{title}</p>
+        <p className="min-w-0 flex-1 truncate text-sm font-medium">{title}</p>
+
+        {actions && <div className="w-full max-w-sm">{actions}</div>}
 
         <Button variant="outline" size="sm" onClick={onExit}>
           <X /> Sair do modo leitura

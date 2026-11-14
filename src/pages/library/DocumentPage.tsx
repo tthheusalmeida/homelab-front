@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "#ui/button";
 import { Card, CardContent } from "#ui/card";
 
+import { BackToTopButton } from "#components/BackToTopButton";
 import { ConfirmDialog } from "#components/ConfirmDialog";
 import { ErrorState } from "#components/ErrorState";
 import { LoadingState } from "#components/LoadingState";
@@ -13,6 +14,7 @@ import { MarkdownMessage } from "#components/MarkdownMessage";
 import { OutlineNav } from "#components/OutlineNav";
 import { PaperPage } from "#components/PaperPage";
 import { ReadingMode } from "#components/ReadingMode";
+import { ReadingSection } from "#components/ReadingSection";
 import { useActiveSection } from "#hooks/use-active-section";
 import { extractHeadings } from "#lib/markdown";
 import { scrollToId } from "#lib/scroll";
@@ -34,6 +36,7 @@ export function DocumentPage() {
   // Uma janela por vez: Editar e Remover fecham a "Sobre" e devolvem para ela.
   const [modal, setModal] = useState<Modal>(null);
   const [reading, setReading] = useState(false);
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
   const { data, isLoading, isError } = useDocument(id);
   const archive = useArchiveDocument();
@@ -101,13 +104,13 @@ export function DocumentPage() {
           ) : null
         }
       >
-        <article className="mx-auto max-w-3xl space-y-8">
-          <h1 className="text-center text-3xl font-semibold tracking-tight">
-            {meta.title}
-          </h1>
+        <div ref={setContainer} className="mx-auto max-w-3xl">
+          <ReadingSection title={meta.title}>
+            <MarkdownMessage content={content} headingIds size="base" />
+          </ReadingSection>
 
-          <MarkdownMessage content={content} headingIds size="base" />
-        </article>
+          <BackToTopButton container={container} />
+        </div>
       </ReadingMode>
     );
   }
@@ -123,7 +126,7 @@ export function DocumentPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]">
-        <div className="min-w-0 space-y-6">
+        <div ref={setContainer} className="min-w-0 space-y-6">
           <PaperPage>
             <header className="space-y-4 border-b pb-8 text-center">
               <h1 className="text-3xl font-semibold tracking-tight">
@@ -139,6 +142,8 @@ export function DocumentPage() {
               <MarkdownMessage content={content} headingIds />
             </div>
           </PaperPage>
+
+          <BackToTopButton container={container} />
         </div>
 
         <DocumentSidebar

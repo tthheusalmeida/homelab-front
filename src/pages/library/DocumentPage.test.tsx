@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 
@@ -515,5 +515,80 @@ describe("DocumentPage — reading mode", () => {
     ).not.toHaveAttribute("aria-current");
 
     vi.restoreAllMocks();
+  });
+});
+
+describe("DocumentPage — back to top", () => {
+  beforeEach(() => {
+    documentQuery.data = detail();
+    documentQuery.isLoading = false;
+    documentQuery.isError = false;
+    document.documentElement.scrollTo = vi.fn() as never;
+  });
+
+  function scrollDocument(top: number) {
+    Object.defineProperty(document.documentElement, "scrollTop", {
+      value: top,
+      configurable: true,
+      writable: true,
+    });
+    act(() => {
+      document.dispatchEvent(new Event("scroll"));
+    });
+  }
+
+  afterEach(() => scrollDocument(0));
+
+  it("when the page is at the top, should not show the back to top button", () => {
+    renderPage();
+
+    expect(
+      screen.queryByRole("button", { name: "Voltar ao topo" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when the reader scrolls down a page, should show the button and scroll to the top on click", async () => {
+    renderPage();
+    scrollDocument(900);
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole("button", { name: "Voltar ao topo" }));
+
+    expect(document.documentElement.scrollTo).toHaveBeenCalledWith({
+      top: 0,
+      behavior: "smooth",
+    });
+    expect(
+      screen.queryByRole("button", { name: "Voltar ao topo" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when the reader scrolls in reading mode, should also offer the button", async () => {
+    renderPage();
+    await userEvent
+      .setup()
+      .click(screen.getByRole("button", { name: /Modo leitura/ }));
+
+    scrollDocument(900);
+
+    expect(
+      within(screen.getByRole("region", { name: "Modo leitura" })).getByRole(
+        "button",
+        { name: "Voltar ao topo" },
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("when the button is shown, should be fixed in the corner outside the text panel", () => {
+    renderPage();
+    scrollDocument(900);
+
+    const button = screen.getByRole("button", { name: "Voltar ao topo" });
+
+    expect(button).toHaveClass("fixed", "right-4", "bottom-4");
+    expect(
+      screen.getByRole("complementary", { name: "Informações da página" }),
+    ).not.toContainElement(button);
   });
 });
