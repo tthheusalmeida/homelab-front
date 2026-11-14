@@ -1,5 +1,8 @@
 # Lib (`src/lib`, `src/hooks`)
 
+## `markdown.ts`
+- `extractHeadings(markdown)` lista os títulos `#` a `###` (ignora código) com id único; `createHeadingIdGenerator` e `slugifyHeading` são usados também pela renderização para os ids coincidirem.
+
 ## `api<T>(path, options?)`
 - Faz `fetch` em `VITE_API_URL + path` com `Content-Type: application/json`; headers passados nas opções sobrescrevem o padrão.
 - Resposta não-ok lança `Error("API error: <status>")`; resposta 204 (sem corpo, ex.: DELETE) devolve `undefined`; senão devolve o JSON.

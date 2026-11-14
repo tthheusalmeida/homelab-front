@@ -9,6 +9,7 @@ import type {
   IndexStatus,
   LibraryFilters,
   PublishInput,
+  UpdateDocumentInput,
   TagCount,
 } from "../types/library.types";
 
@@ -34,7 +35,9 @@ export function buildDocumentsQuery(filters: LibraryFilters = {}): string {
 export function getDocuments(filters: LibraryFilters = {}) {
   const query = buildDocumentsQuery(filters);
 
-  return api<DocumentSummary[]>(`/library/documents${query ? `?${query}` : ""}`);
+  return api<DocumentSummary[]>(
+    `/library/documents${query ? `?${query}` : ""}`,
+  );
 }
 
 export function getDocument(id: string) {
@@ -96,4 +99,11 @@ export function suggestClassification(id: string, modelId?: string) {
     `/library/documents/${encodeURIComponent(id)}/suggest`,
     { method: "POST", body: JSON.stringify(modelId ? { modelId } : {}) },
   );
+}
+
+export function updateDocument(id: string, input: UpdateDocumentInput) {
+  return api<DocumentDetail>(`/library/documents/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
 }

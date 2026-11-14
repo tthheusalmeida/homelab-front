@@ -17,6 +17,7 @@ vi.mock("../api/library", () => ({
   discardDocument: vi.fn(),
   createArticle: vi.fn(),
   suggestClassification: vi.fn(),
+  updateDocument: vi.fn(),
 }));
 
 import { createTestQueryClient } from "../../../test/utils";
@@ -35,6 +36,7 @@ import {
   useReindex,
   useSuggestClassification,
   useTags,
+  useUpdateDocument,
 } from "./useLibrary";
 
 function setup() {
@@ -72,10 +74,10 @@ describe("library query hooks", () => {
     vi.mocked(library.getDocuments).mockResolvedValue([]);
     const { wrapper } = setup();
 
-    const { result, rerender } = renderHook(
-      ({ q }) => useDocuments({ q }),
-      { wrapper, initialProps: { q: "a" } },
-    );
+    const { result, rerender } = renderHook(({ q }) => useDocuments({ q }), {
+      wrapper,
+      initialProps: { q: "a" },
+    });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     rerender({ q: "b" });
@@ -110,7 +112,10 @@ describe("library query hooks", () => {
     vi.mocked(library.getInbox).mockResolvedValue([]);
     vi.mocked(library.getCategories).mockResolvedValue([]);
     vi.mocked(library.getTags).mockResolvedValue([]);
-    vi.mocked(library.getIndexStatus).mockResolvedValue({ total: 0, errors: [] });
+    vi.mocked(library.getIndexStatus).mockResolvedValue({
+      total: 0,
+      errors: [],
+    });
     const { wrapper } = setup();
 
     renderHook(
@@ -214,6 +219,25 @@ describe("library mutation hooks", () => {
     });
 
     expect(library.reindex).toHaveBeenCalled();
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ["library"] });
+  });
+
+  it("when updating, should call the api and invalidate the library queries", async () => {
+    vi.mocked(library.updateDocument).mockResolvedValue({
+      meta: {} as never,
+      content: "",
+    });
+    const { wrapper, invalidate } = setup();
+    const { result } = renderHook(() => useUpdateDocument(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        id: "id1",
+        input: { title: "T" },
+      });
+    });
+
+    expect(library.updateDocument).toHaveBeenCalledWith("id1", { title: "T" });
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["library"] });
   });
 

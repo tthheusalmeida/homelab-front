@@ -96,3 +96,10 @@ export interface ClassificationSuggestion {
   /** Modelo do Gemini que gerou a sugestão. */
   model: string;
 }
+
+export interface UpdateDocumentInput {
+  title?: string;
+  category?: string[];
+  tags?: string[];
+  content?: string;
+}

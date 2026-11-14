@@ -87,9 +87,9 @@ describe("CategoryBreadcrumb", () => {
   it("when there is a category, should show every level in order", () => {
     render(<CategoryBreadcrumb category={["A", "B", "C"]} />);
 
-    expect(screen.getByRole("navigation", { name: "Categoria" })).toHaveTextContent(
-      "ABC",
-    );
+    expect(
+      screen.getByRole("navigation", { name: "Categoria" }),
+    ).toHaveTextContent("ABC");
   });
 
   it("when the category is empty, should show Sem categoria", () => {
@@ -141,13 +141,17 @@ describe("DocumentCard", () => {
   it("when matched by metadata, should not say matched by content", () => {
     setup(doc({ matchedIn: "metadata" }));
 
-    expect(screen.queryByText(/Encontrado no conteúdo/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Encontrado no conteúdo/),
+    ).not.toBeInTheDocument();
   });
 
   it("when actions are given, should render them", () => {
     setup(doc(), <button>Descartar</button>);
 
-    expect(screen.getByRole("button", { name: "Descartar" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Descartar" }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -179,9 +183,15 @@ describe("CategoryTree", () => {
   it("when rendered, should show the root categories with counts and collapsed children", () => {
     render(<CategoryTree nodes={tree} selected={[]} onSelect={() => {}} />);
 
-    expect(screen.getByRole("button", { name: /^Ciência/ })).toHaveTextContent("3");
-    expect(screen.getByRole("button", { name: /^Química/ })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /^DevOps/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Ciência/ })).toHaveTextContent(
+      "3",
+    );
+    expect(
+      screen.getByRole("button", { name: /^Química/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^DevOps/ }),
+    ).not.toBeInTheDocument();
   });
 
   it("when the expand button is clicked, should reveal the children; clicking again collapses", async () => {
@@ -192,7 +202,9 @@ describe("CategoryTree", () => {
     expect(screen.getByRole("button", { name: /^DevOps/ })).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Recolher Ciência" }));
-    expect(screen.queryByRole("button", { name: /^DevOps/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^DevOps/ }),
+    ).not.toBeInTheDocument();
   });
 
   it("when a category is clicked, should call onSelect with its full path", async () => {
@@ -213,7 +225,9 @@ describe("CategoryTree", () => {
       <CategoryTree nodes={tree} selected={["Química"]} onSelect={onSelect} />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Todas as categorias" }));
+    await user.click(
+      screen.getByRole("button", { name: "Todas as categorias" }),
+    );
 
     expect(onSelect).toHaveBeenCalledWith([]);
   });
@@ -273,14 +287,18 @@ describe("PublishDialog", () => {
     setup(doc({ status: "pending", category: [], tags: ["x"] }));
 
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("Adicionar à biblioteca")).toBeInTheDocument();
+    expect(
+      within(dialog).getByText("Adicionar à biblioteca"),
+    ).toBeInTheDocument();
     expect(within(dialog).getByLabelText("Título")).toHaveValue(
       "Práticas da Primeira Maneira",
     );
     // A tag aparece no campo e na prévia de como vai ficar.
     expect(within(dialog).getAllByText("x")).toHaveLength(2);
     expect(
-      within(dialog).getByRole("region", { name: "Como vai ficar na biblioteca" }),
+      within(dialog).getByRole("region", {
+        name: "Como vai ficar na biblioteca",
+      }),
     ).toBeInTheDocument();
   });
 
@@ -300,7 +318,9 @@ describe("PublishDialog", () => {
   });
 
   it("when a suggestion is applied, should fill title, category and tags for review", async () => {
-    const { user } = setup(doc({ status: "pending", category: [], tags: ["x"] }));
+    const { user } = setup(
+      doc({ status: "pending", category: [], tags: ["x"] }),
+    );
 
     await user.click(screen.getByRole("button", { name: "aplicar sugestão" }));
 

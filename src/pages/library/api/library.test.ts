@@ -18,6 +18,7 @@ import {
   publishDocument,
   reindex,
   suggestClassification,
+  updateDocument,
 } from "./library";
 
 describe("buildDocumentsQuery", () => {
@@ -38,7 +39,10 @@ describe("buildDocumentsQuery", () => {
     });
     const params = new URLSearchParams(query);
 
-    expect(params.getAll("category")).toEqual(["Ciência da Computação", "DevOps"]);
+    expect(params.getAll("category")).toEqual([
+      "Ciência da Computação",
+      "DevOps",
+    ]);
     expect(params.getAll("tag")).toEqual(["a", "b"]);
   });
 
@@ -130,6 +134,17 @@ describe("library api", () => {
 
     expect(api).toHaveBeenCalledWith("/library/documents/id1", {
       method: "DELETE",
+    });
+  });
+
+  it("when updating, should PATCH the given fields as json and encode the id", async () => {
+    const input = { title: "T", content: "c" };
+
+    await updateDocument("a/b", input);
+
+    expect(api).toHaveBeenCalledWith("/library/documents/a%2Fb", {
+      method: "PATCH",
+      body: JSON.stringify(input),
     });
   });
 

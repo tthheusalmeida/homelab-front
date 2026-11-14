@@ -10,6 +10,12 @@
 - Envia `POST /jobs/video-to-transcript` com `{ url }`.
 - Erro: "Não foi possível criar o job. Tente novamente."
 
+### Dados do documento (nos dois formulários)
+- Abaixo da URL há o bloco opcional "Dados do documento" (`JobDocumentFields` → `DocumentFields`): título, categoria (até 4 níveis, com as categorias já existentes como sugestão) e tags. Texto explica que o que for preenchido já vem pronto na Entrada e pode ser ajustado ao adicionar à biblioteca.
+- O título vazio mostra o padrão como dica ("Se vazio: Transcrição de vídeo" / "Se vazio: Resumo de vídeo").
+- O envio inclui `title`, `category` e `tags` **somente se preenchidos** (título aparado, níveis em branco descartados); vazios ficam de fora do corpo da requisição. Campos ficam desabilitados durante a criação.
+- O diálogo de criação tem altura máxima de 90% da tela e rola por dentro.
+
 ### Resumo
 - Além da URL, exige provider, modelo e thinking (reaproveita os selects do chat). Sem os três escolhidos o botão fica desabilitado e nada é enviado.
 - Trocar provider limpa modelo e thinking; trocar modelo limpa thinking. **Aqui não há valor padrão**: o usuário precisa escolher.

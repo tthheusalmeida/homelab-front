@@ -18,8 +18,13 @@ import {
   publishDocument,
   reindex,
   suggestClassification,
+  updateDocument,
 } from "../api/library";
-import type { LibraryFilters, PublishInput } from "../types/library.types";
+import type {
+  LibraryFilters,
+  PublishInput,
+  UpdateDocumentInput,
+} from "../types/library.types";
 
 const LIBRARY_KEY = ["library"] as const;
 
@@ -126,5 +131,15 @@ export function useSuggestClassification() {
   return useMutation({
     mutationFn: ({ id, modelId }: { id: string; modelId?: string }) =>
       suggestClassification(id, modelId),
+  });
+}
+
+export function useUpdateDocument() {
+  const invalidate = useInvalidateLibrary();
+
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: UpdateDocumentInput }) =>
+      updateDocument(id, input),
+    onSuccess: invalidate,
   });
 }
