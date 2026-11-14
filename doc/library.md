@@ -1,10 +1,12 @@
 # Biblioteca (`pages/library`)
 
-Menu: seção **Biblioteca**, logo depois da seção com "Início", com **Acervo** (`/library`), **Entrada** (`/library/inbox`) e **Novo artigo** (`/library/new`). Um documento abre em `/library/:id`.
+Menu: seção **Biblioteca**, logo depois da seção com "Início", com **Páginas** (`/library`), **Livros** (`/library/books`), **Entrada** (`/library/inbox`) e **Nova página** (`/library/new`). Uma página abre em `/library/:id`.
+
+**Vocabulário:** na interface, o conteúdo da biblioteca (resumo, transcrição ou texto escrito) se chama **página**, porque as páginas são o que se junta para formar um **livro**. Nesta documentação, nos nomes de código e na API, o mesmo item continua sendo chamado de "documento".
 
 Os dados vêm de `/library/*` do back (ver `back/doc/library.md`). Qualquer alteração (adicionar, remover, descartar, criar, reindexar) invalida todas as consultas da biblioteca.
 
-## Acervo (`/library`)
+## Páginas (`/library`, antigo Acervo)
 - Lista os documentos **publicados**; ordenação padrão A–Z (alfanumérica natural pt-BR), com opção "Mais recentes".
 - **Pesquisa:** campo de texto com espera de 300 ms depois de digitar. Procura em título, nome do arquivo, tags, categorias e no conteúdo dos documentos. Resultado achado só no conteúdo mostra "Encontrado no conteúdo".
 - **Filtros combináveis:** tipo (Resumo, Transcrição, Criação), origem (Vídeo, Manual), tags (botões; várias tags exigem todas) e categoria (árvore à esquerda).
@@ -12,7 +14,7 @@ Os dados vêm de `/library/*` do back (ver `back/doc/library.md`). Qualquer alte
 - A pesquisa fica na mesma linha dos filtros (largura de 16rem em telas largas), não em uma linha própria.
 - **Tags enxutas (`TagFilter`):** a barra mostra só as 8 tags mais usadas (empate por nome) mais as selecionadas; as demais ficam no botão "+N tags", que abre a janela "Todas as tags" com busca (sem acento/caixa) e os mesmos botões de alternar.
 - **Modos de visualização (`ViewToggle`):** Lista (padrão; uma linha por documento com título, tipo, categoria, até 3 tags no desktop e data, sem prévia), Cartões (com prévia) e Grade (cartões em 2 a 3 colunas). A escolha fica guardada no navegador (`library:view`). Em todos os modos, mais de 3 tags viram "+N" (a lista completa vai no title).
-- O texto do documento tem largura máxima de leitura (`max-w-3xl`) e margem lateral.
+- A página é lida numa **folha** (`PaperPage`) que usa as cores do tema (cartão sobre o fundo; sem cores fixas, para combinar com o tema claro e o escuro), com margens generosas, borda e sombra suaves e largura máxima de leitura (`max-w-3xl`). A fonte é a padrão do app.
 - "Limpar filtros" só aparece com algum filtro ativo e limpa pesquisa, categoria, tipo, origem e tags (a ordenação é mantida).
 - Enquanto uma nova pesquisa carrega, a lista anterior continua na tela.
 - Estados: carregando; erro (com "Tentar novamente"); **biblioteca vazia** (sem filtros: convida a ir à Entrada); **nenhum resultado** (com filtros: oferece limpar).
@@ -32,15 +34,19 @@ Os dados vêm de `/library/*` do back (ver `back/doc/library.md`). Qualquer alte
 - **Reindexar:** reconstrói o índice a partir dos arquivos. Arquivos que não puderam ser lidos aparecem num alerta com nome do arquivo e motivo.
 - Vazio: "Nada aguardando decisão" (com link para criar job) e "Nenhum documento removido".
 
-## Novo artigo (`/library/new`)
-- Campos: título, categoria (1 a 4 níveis), tags e conteúdo em Markdown. "Salvar artigo" só habilita com título, categoria e conteúdo (não só espaços).
-- "Prévia" alterna entre escrever e ver o Markdown renderizado; o texto digitado é mantido ao voltar. Prévia vazia mostra "Nada para mostrar ainda."
+## Nova página (`/library/new`)
+- Duas **seções separadas**, uma abaixo da outra, cada uma num quadro numerado:
+  - **1. Dados da página:** à esquerda título, categoria (1 a 4 níveis) e tags; à direita a prévia "Como vai ficar na biblioteca" (como a página aparece na lista e onde fica guardada).
+  - **2. Texto da página:** o editor à esquerda e a prévia do texto à direita, atualizada enquanto digita (sem botão de alternar), com a contagem de palavras e a leitura estimada embaixo.
+- Barra fixa no rodapé com o que **falta** para salvar ("Falta: título, categoria, texto." ou "Tudo pronto para salvar."), "Cancelar" (volta para as Páginas) e "Salvar página", que só habilita com título, categoria e texto (não só espaços). Prévia vazia mostra "Nada para mostrar ainda."
 - Imagens: apenas por URL (`![alt](https://...)`); não há upload.
-- Ao salvar, o artigo nasce publicado e a tela abre o documento criado. Erro mostra mensagem e mantém o formulário.
+- Ao salvar, a página nasce publicada (tipo Criação) e a tela abre a página criada. Erro mostra mensagem e mantém o formulário.
 
 ## Leitura do documento (`DocumentPage`, `/library/:id`)
 - Em telas largas (`lg`) a página tem duas colunas: texto à esquerda e **painel lateral fixo (sticky) à direita**, que fica visível enquanto o texto rola. Em telas estreitas o painel vem abaixo do texto.
-- No topo, à esquerda, o botão Voltar e a categoria como trilha (ex.: DevOps > Introdução). Coluna do texto: título grande e centralizado (com respiro acima), o tipo do documento (Resumo/Transcrição/Criação) logo abaixo do título e o conteúdo em Markdown.
+- No topo, à esquerda, o botão Voltar e a categoria como trilha (ex.: DevOps > Introdução). Coluna do texto: uma folha (`PaperPage`) com o título centralizado, o tipo (Resumo/Transcrição/Criação) logo abaixo, uma linha separando e o conteúdo em Markdown. No livro, o corpo de cada capítulo usa a mesma folha (sem borda, sombra e fundo, dentro do quadro do capítulo).
+- **Sumário com "estou lendo agora":** o título que está sendo lido (o último que já passou perto do topo da tela) aparece no sumário com a cor de destaque e em negrito (`aria-current`). Vale na rolagem da janela e na do modo leitura (`useActiveSection`, `OutlineNav`).
+- **Modo leitura:** o botão "Modo leitura" no painel cobre a tela inteira só com o título, o texto (em tamanho maior) e o sumário na lateral, sem cabeçalhos, botões de ação nem o menu do app. "Sair do modo leitura" ou Esc volta à página normal. O texto é desenhado só no modo leitura (nunca junto com a página normal) para não repetir ids de título.
 - O painel (`DocumentSidebar`, largura 26rem) é todo fixo (sticky) enquanto o texto rola; para isso o `AppLayout` limita a altura da tela (`h-svh`) e a rolagem acontece na `ScrollArea`. Fica só o "Sumário" visível, grande (até 60% da altura da tela, com rolagem própria), e o botão "Sobre o documento".
 - "Sumário": índice dos títulos `#` a `###` (aparece com 2 ou mais títulos; ignora blocos de código; níveis recuados). Clicar rola suavemente até o título. Os títulos do texto recebem `id` (slug sem acento; repetidos viram `-2`, `-3`) via `MarkdownMessage headingIds`; o id vem de um mapa linha → id (`headingIdsByLine`), calculado como o do sumário, e não de um contador na renderização (que quebrava com o StrictMode e fazia o clique não achar o título).
 - **Janelas, uma por vez** (estado `modal` no `DocumentPage`): "Sobre o documento" (`DocumentAboutDialog`) mostra Situação, Origem, Tags (ou "Sem tags"), Criado em, Atualizado em e Fonte (link "Fonte original", só se houver URL) e, em documento **publicado**, os botões Editar e Remover da biblioteca.
@@ -57,7 +63,7 @@ Os dados vêm de `/library/*` do back (ver `back/doc/library.md`). Qualquer alte
 - Salvar manda título, categoria, tags e conteúdo; mudar título ou categoria renomeia/move o arquivo (regra do back). Em sucesso volta ao documento; erro mostra mensagem e mantém o formulário. Cancelar volta ao documento sem salvar.
 
 ## Editor de Markdown (`MarkdownEditor`)
-- Novo artigo: campo "Conteúdo" com botão Prévia/Editar (a prévia renderiza o Markdown, inclusive tabelas e imagens).
+- Uso simples (sem `splitPreview`): campo "Conteúdo" com botão Prévia/Editar (a prévia renderiza o Markdown, inclusive tabelas e imagens). A Nova página e a edição usam `splitPreview`.
 - Edição (`splitPreview`): em telas largas a prévia fica **ao lado direito** do texto, sempre visível e fixa na rolagem, e o botão Prévia some. Em telas estreitas a prévia vem abaixo do texto.
 - **Tabela:** insere um modelo de tabela de 2 colunas na posição do cursor, em bloco próprio (linha em branco antes e depois quando há texto ao redor), e deixa o cursor logo depois.
 - **Imagem:** abre campos "URL da imagem" e "Texto alternativo" e insere `![alt](url)` no cursor. Só aceita URL http(s); outra coisa mostra "Informe uma URL http(s) válida.". Espaços e parênteses na URL são codificados; colchetes e quebras de linha no texto alternativo são removidos. Não há upload de arquivo.
@@ -67,6 +73,7 @@ Os dados vêm de `/library/*` do back (ver `back/doc/library.md`). Qualquer alte
 - **Estante (`BooksPage`):** cada livro aparece como uma **capa** (`BookCover`: degradê da cor escolhida ou a imagem, lombada, tipo, título e subtítulo) com título, descrição e contagem de capítulos e módulos embaixo; o cartão inteiro leva ao livro. "Novo livro" abre o formulário (`BookFormDialog`) e, ao criar, abre o livro. Sem livros: estado vazio com atalho para criar.
 - **Capa (`BookCover`):** o formulário tem título (obrigatório), **subtítulo**, tipo, **cor** (Azul, Verde, Roxo, Laranja, Rosa, Grafite), **imagem por URL** (opcional; só http/https, outra coisa mostra "Informe uma URL http(s) válida." e bloqueia salvar; não há upload) e descrição, com **prévia ao vivo** da capa. Imagem que não carrega volta para só a cor. A capa aparece na estante, no topo do livro, nos detalhes e na prévia do formulário.
 - **Detalhes (`BookDetailsDialog`, botão "Detalhes" no livro):** ficha com a capa, título, subtítulo, tipo, descrição, números (módulos, capítulos, palavras, leitura estimada a 200 palavras/min, criado e atualizado em) e a estrutura completa com as palavras de cada capítulo. Os números vêm de `books/stats.ts` e só contam capítulos disponíveis.
+- **Modo leitura do livro:** o botão "Modo leitura" (primeiro do cabeçalho, só com capítulos) mostra só os capítulos (sem o link "Abrir página") e o "Sumário do livro" na lateral, com o capítulo em leitura em destaque. Esc ou "Sair do modo leitura" volta.
 - **Livro (`BookPage`):** leitura contínua com cada **capítulo bem delimitado**: o módulo (se tiver título) vira um banner colorido; cada capítulo é um quadro com borda, **cabeçalho** ("CAPÍTULO N", título e link "Abrir documento") onde ele começa e **rodapé** ("Fim do capítulo N" e, se houver, o botão "Próximo: título" que rola até o seguinte) onde termina, com bastante espaço entre capítulos. O texto é em Markdown, com ids dos títulos prefixados pelo documento (`MarkdownMessage idPrefix`) para não repetir entre capítulos. Capítulos indisponíveis (documento removido/apagado) não aparecem. Cabeçalho da página centralizado com Organizar, Editar dados e Excluir livro (confirmação; só o livro é excluído).
 - **Painel fixo à direita (`BookSidebar`):** campo "Pesquisar no livro..." (espera 300 ms; só pesquisa com 2+ caracteres) e "Sumário do livro" (módulos e capítulos numerados; clicar rola até o capítulo). Os resultados mostram capítulo, módulo e o trecho; clicar rola até o **título mais próximo acima da linha encontrada** (ou o começo do capítulo) e destaca o ponto por instantes (`hitTargetId`).
 - **Organizar (`BookOrganizerDialog`, tela cheia), por arrastar e soltar** (HTML5 nativo, sem biblioteca): arraste um **capítulo** pelo item (ícone de alça) para outra posição, inclusive para outro módulo; solte na metade de cima ou de baixo de um capítulo (uma barra marca onde vai cair) ou na área do módulo para ir ao fim dele, e em módulo vazio para preenchê-lo. Arraste um **módulo** pela alça do cabeçalho para reordenar (leva os capítulos junto). "Novo módulo" fica **no topo de tudo** e adiciona o módulo vazio **no fim da lista**. Também: renomear e remover módulo (os capítulos vão para o anterior; com um módulo só não remove) e remover capítulo do livro. À direita, busca na biblioteca e "Adicionar" (entra no fim do último módulo; quem já está no livro não aparece). "Salvar" só habilita com mudanças e envia a estrutura inteira. A lógica pura (`dropChapter`, `dropModule`, `dropSide`) está em `books/organizer.ts`.
