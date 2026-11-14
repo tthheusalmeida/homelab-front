@@ -6,6 +6,9 @@
 - Rodar: `npm test` (tudo), `npx vitest run caminho/arquivo.test.tsx` (um), `npm run test:watch`.
 - Arquivo de teste fica ao lado do código (`x.ts` → `x.test.ts`); componentes pequenos de uma pasta podem compartilhar um arquivo (`*-components.test.tsx`).
 
+## Regra de entrega
+Toda feature (nova ou alterada) deve vir acompanhada de testes unitários na mesma entrega. Feature sem testes não está concluída. Cubra o caminho feliz, os erros e os casos de borda, e rode a suíte completa antes de finalizar.
+
 ## Padrão de nome (obrigatório)
 `it('when <situação>, should <resultado>', ...)`. `describe` agrupa por componente/hook/função.
 

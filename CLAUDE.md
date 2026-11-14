@@ -43,6 +43,7 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 - Siga o padrão dos existentes (props tipadas, `cn()`, aliases `#ui/*` `#components/*`).
 
 ## Regras para testes (OBRIGATÓRIO)
+- **Toda feature (nova ou alterada) deve vir acompanhada de testes unitários na mesma entrega.** Uma feature sem testes não é considerada concluída; cubra o caminho feliz, os erros e os casos de borda das regras novas.
 - Toda funcionalidade nova ou alterada precisa de teste ao lado do arquivo (`*.test.ts` / `*.test.tsx`).
 - **Nome de cada teste: `when <situação>, should <resultado>`** (ex.: `it('when the url is empty, should disable the submit button')`).
 - Se uma mudança quebrar um teste, decida se é regressão (corrija o código) ou mudança de regra (atualize teste **e** `doc/`).
