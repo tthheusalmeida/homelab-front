@@ -17,6 +17,7 @@ import {
   getTags,
   publishDocument,
   reindex,
+  suggestClassification,
 } from "./library";
 
 describe("buildDocumentsQuery", () => {
@@ -129,6 +130,24 @@ describe("library api", () => {
 
     expect(api).toHaveBeenCalledWith("/library/documents/id1", {
       method: "DELETE",
+    });
+  });
+
+  it("when suggesting with a model, should POST the model id", async () => {
+    await suggestClassification("id1", "gemini-3.5-flash");
+
+    expect(api).toHaveBeenCalledWith("/library/documents/id1/suggest", {
+      method: "POST",
+      body: JSON.stringify({ modelId: "gemini-3.5-flash" }),
+    });
+  });
+
+  it("when suggesting without a model, should POST an empty body", async () => {
+    await suggestClassification("a/b");
+
+    expect(api).toHaveBeenCalledWith("/library/documents/a%2Fb/suggest", {
+      method: "POST",
+      body: "{}",
     });
   });
 

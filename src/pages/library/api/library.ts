@@ -2,6 +2,7 @@ import { api } from "#lib/api";
 
 import type {
   CategoryNode,
+  ClassificationSuggestion,
   CreateArticleInput,
   DocumentDetail,
   DocumentSummary,
@@ -88,4 +89,11 @@ export function createArticle(input: CreateArticleInput) {
     method: "POST",
     body: JSON.stringify(input),
   });
+}
+
+export function suggestClassification(id: string, modelId?: string) {
+  return api<ClassificationSuggestion>(
+    `/library/documents/${encodeURIComponent(id)}/suggest`,
+    { method: "POST", body: JSON.stringify(modelId ? { modelId } : {}) },
+  );
 }

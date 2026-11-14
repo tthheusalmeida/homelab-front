@@ -88,3 +88,11 @@ export interface CreateArticleInput {
   tags?: string[];
   content: string;
 }
+
+export interface ClassificationSuggestion {
+  title: string;
+  category: string[];
+  tags: string[];
+  /** Modelo do Gemini que gerou a sugestão. */
+  model: string;
+}

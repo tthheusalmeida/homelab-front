@@ -17,6 +17,7 @@ import {
   getTags,
   publishDocument,
   reindex,
+  suggestClassification,
 } from "../api/library";
 import type { LibraryFilters, PublishInput } from "../types/library.types";
 
@@ -117,5 +118,13 @@ export function useReindex() {
   return useMutation({
     mutationFn: reindex,
     onSuccess: invalidate,
+  });
+}
+
+/** Só sugere; não altera nada na biblioteca, então não invalida cache. */
+export function useSuggestClassification() {
+  return useMutation({
+    mutationFn: ({ id, modelId }: { id: string; modelId?: string }) =>
+      suggestClassification(id, modelId),
   });
 }

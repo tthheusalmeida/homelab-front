@@ -15,6 +15,29 @@ vi.mock("../hooks/useLibrary", () => ({
   usePublishDocument: () => publishState,
 }));
 
+// O painel de sugestão tem testes próprios; aqui só interessa o preenchimento.
+vi.mock("./SuggestionPanel", () => ({
+  SuggestionPanel: ({
+    onSuggestion,
+  }: {
+    onSuggestion: (suggestion: unknown) => void;
+  }) => (
+    <button
+      type="button"
+      onClick={() =>
+        onSuggestion({
+          title: "Título sugerido",
+          category: ["Física", "Ótica"],
+          tags: ["luz"],
+          model: "gemini-3.1-flash-lite",
+        })
+      }
+    >
+      aplicar sugestão
+    </button>
+  ),
+}));
+
 import type { CategoryNode, DocumentSummary } from "../types/library.types";
 
 import { CategoryBreadcrumb } from "./CategoryBreadcrumb";
@@ -274,6 +297,20 @@ describe("PublishDialog", () => {
     expect(screen.getByLabelText("Categoria")).toHaveValue("Ciência");
     expect(screen.getByLabelText("Subcategoria")).toHaveValue("DevOps");
     expect(screen.getByRole("button", { name: "Readicionar" })).toBeEnabled();
+  });
+
+  it("when a suggestion is applied, should fill title, category and tags for review", async () => {
+    const { user } = setup(doc({ status: "pending", category: [], tags: ["x"] }));
+
+    await user.click(screen.getByRole("button", { name: "aplicar sugestão" }));
+
+    expect(screen.getByLabelText("Título")).toHaveValue("Título sugerido");
+    expect(screen.getByLabelText("Categoria")).toHaveValue("Física");
+    expect(screen.getByLabelText("Subcategoria")).toHaveValue("Ótica");
+    expect(screen.queryByText("x")).not.toBeInTheDocument();
+    expect(screen.getAllByText("luz").length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: "Adicionar" })).toBeEnabled();
+    expect(publishState.mutate).not.toHaveBeenCalled();
   });
 
   it("when the title is cleared, should disable the submit button", async () => {

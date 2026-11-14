@@ -16,6 +16,7 @@ vi.mock("../api/library", () => ({
   archiveDocument: vi.fn(),
   discardDocument: vi.fn(),
   createArticle: vi.fn(),
+  suggestClassification: vi.fn(),
 }));
 
 import { createTestQueryClient } from "../../../test/utils";
@@ -32,6 +33,7 @@ import {
   useInbox,
   usePublishDocument,
   useReindex,
+  useSuggestClassification,
   useTags,
 } from "./useLibrary";
 
@@ -213,6 +215,36 @@ describe("library mutation hooks", () => {
 
     expect(library.reindex).toHaveBeenCalled();
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["library"] });
+  });
+
+  it("when suggesting, should call the api with id and model and not invalidate", async () => {
+    const suggestion = {
+      title: "T",
+      category: ["A"],
+      tags: [],
+      model: "gemini-3.1-flash-lite",
+    };
+    vi.mocked(library.suggestClassification).mockResolvedValue(suggestion);
+    const { wrapper, invalidate } = setup();
+    const { result } = renderHook(() => useSuggestClassification(), {
+      wrapper,
+    });
+
+    let returned: unknown;
+
+    await act(async () => {
+      returned = await result.current.mutateAsync({
+        id: "id1",
+        modelId: "gemini-3.1-flash-lite",
+      });
+    });
+
+    expect(library.suggestClassification).toHaveBeenCalledWith(
+      "id1",
+      "gemini-3.1-flash-lite",
+    );
+    expect(returned).toEqual(suggestion);
+    expect(invalidate).not.toHaveBeenCalled();
   });
 
   it("when a mutation fails, should not invalidate the queries", async () => {

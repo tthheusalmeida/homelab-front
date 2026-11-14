@@ -19,6 +19,7 @@ import { TagInput } from "#components/TagInput";
 
 import { useCategories, usePublishDocument } from "../hooks/useLibrary";
 import { DocumentPreview } from "./DocumentPreview";
+import { SuggestionPanel } from "./SuggestionPanel";
 import type { DocumentSummary } from "../types/library.types";
 
 interface PublishDialogProps {
@@ -82,47 +83,64 @@ function PublishForm({ document, onDone }: PublishFormProps) {
         </DialogDescription>
       </DialogHeader>
 
-      <div className="space-y-2">
-        <Label htmlFor="publish-title">Título</Label>
+      {/* Só o miolo rola; título e botões ficam sempre visíveis. */}
+      <div className="max-h-[55dvh] space-y-5 overflow-y-auto px-1 py-1">
+        <SuggestionPanel
+          documentId={document.id}
+          disabled={publish.isPending}
+          onSuggestion={(suggestion) => {
+            setTitle(suggestion.title);
+            setCategory(suggestion.category);
+            setTags(suggestion.tags);
+          }}
+        />
 
-        <Input
-          id="publish-title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
+        <div className="space-y-2">
+          <Label htmlFor="publish-title">Título</Label>
+
+          <Input
+            id="publish-title"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            disabled={publish.isPending}
+          />
+        </div>
+
+        <CategoryPicker
+          value={category}
+          onChange={setCategory}
+          options={categories.data ?? []}
           disabled={publish.isPending}
         />
+
+        <div className="space-y-2">
+          <Label>Tags</Label>
+
+          <p className="text-sm text-muted-foreground">
+            Etiquetas livres para achar o documento na busca, independentes da
+            pasta. Ex.: docker, prova, revisar.
+          </p>
+
+          <TagInput
+            value={tags}
+            onChange={setTags}
+            disabled={publish.isPending}
+          />
+        </div>
+
+        <DocumentPreview
+          title={title}
+          category={category}
+          tags={tags}
+          excerpt={document.preview}
+        />
+
+        {publish.isError && (
+          <p className="text-sm text-destructive">
+            Não foi possível adicionar. Verifique a categoria e tente novamente.
+          </p>
+        )}
       </div>
-
-      <CategoryPicker
-        value={category}
-        onChange={setCategory}
-        options={categories.data ?? []}
-        disabled={publish.isPending}
-      />
-
-      <div className="space-y-2">
-        <Label>Tags</Label>
-
-        <p className="text-sm text-muted-foreground">
-          Etiquetas livres para achar o documento na busca, independentes da
-          pasta. Ex.: docker, prova, revisar.
-        </p>
-
-        <TagInput value={tags} onChange={setTags} disabled={publish.isPending} />
-      </div>
-
-      <DocumentPreview
-        title={title}
-        category={category}
-        tags={tags}
-        excerpt={document.preview}
-      />
-
-      {publish.isError && (
-        <p className="text-sm text-destructive">
-          Não foi possível adicionar. Verifique a categoria e tente novamente.
-        </p>
-      )}
 
       <DialogFooter>
         <Button
