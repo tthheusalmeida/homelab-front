@@ -12,6 +12,7 @@ import { LibraryPage } from "../pages/library/LibraryPage";
 import { InboxPage } from "../pages/library/InboxPage";
 import { NewArticlePage } from "../pages/library/NewArticlePage";
 import { DocumentPage } from "../pages/library/DocumentPage";
+import { EditDocumentPage } from "../pages/library/EditDocumentPage";
 
 import { CreatePage } from "../pages/jobs/create/CreatePage";
 import { TrackPage } from "../pages/jobs/track/TrackPage";
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
           {
             path: ":id",
             element: <DocumentPage />,
+          },
+          {
+            path: ":id/edit",
+            element: <EditDocumentPage />,
           },
         ],
       },

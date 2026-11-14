@@ -306,6 +306,18 @@ describe("ConfirmDialog", () => {
     expect(screen.getByText("Não dá para desfazer.")).toBeInTheDocument();
   });
 
+  it("when errorMessage is given, should show it as an alert", () => {
+    setup({ errorMessage: "Falhou ao apagar." });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Falhou ao apagar.");
+  });
+
+  it("when there is no errorMessage, should not show an alert", () => {
+    setup();
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
   it("when confirm is clicked, should call onConfirm", async () => {
     const { onConfirm, user } = setup();
 

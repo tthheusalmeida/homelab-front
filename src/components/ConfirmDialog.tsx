@@ -18,6 +18,8 @@ interface ConfirmDialogProps {
   confirmLabel?: string;
   destructive?: boolean;
   isPending?: boolean;
+  /** Mensagem de erro mostrada abaixo da descrição (ex.: falha ao confirmar). */
+  errorMessage?: string;
   onConfirm: () => void;
 }
 
@@ -29,6 +31,7 @@ export function ConfirmDialog({
   confirmLabel = "Confirmar",
   destructive,
   isPending,
+  errorMessage,
   onConfirm,
 }: ConfirmDialogProps) {
   return (
@@ -39,6 +42,12 @@ export function ConfirmDialog({
 
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+
+        {errorMessage && (
+          <p role="alert" className="text-sm text-destructive">
+            {errorMessage}
+          </p>
+        )}
 
         <DialogFooter>
           <Button
