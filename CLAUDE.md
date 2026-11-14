@@ -10,7 +10,7 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 | `doc/home.md` | Home: status dos serviços, cards, relógio |
 | `doc/chat.md` | Chat com IA: seleção provider/modelo/thinking, envio, cancelamento |
 | `doc/usage.md` | Uso de IA: métricas, filtro, formatação |
-| `doc/library.md` | Biblioteca: acervo, busca/filtros, documento, edição, entrada (adicionar/remover/descartar), novo artigo |
+| `doc/library.md` | Biblioteca: acervo, busca/filtros, documento, edição, livros (módulos, leitura, pesquisa), entrada (adicionar/remover/descartar), novo artigo |
 | `doc/jobs.md` | Criar e acompanhar jobs |
 | `doc/components.md` | Regra de reuso de componentes base e lista dos existentes |
 | `doc/lib.md` | `api()`, formatadores, query client |
@@ -23,7 +23,7 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 - `npm run build` (`tsc -b && vite build`) / `npm run lint` (oxlint)
 
 ## Mapa do código (`src/`)
-- `app/router.tsx` + `app/layouts/AppLayout.tsx` — rotas: `/`, `/library`, `/library/inbox`, `/library/new`, `/library/:id`, `/library/:id/edit`, `/ai/chat`, `/ai/usage`, `/jobs/create`, `/jobs/track`
+- `app/router.tsx` + `app/layouts/AppLayout.tsx` — rotas: `/`, `/library`, `/library/inbox`, `/library/new`, `/library/books`, `/library/books/:bookId`, `/library/:id`, `/library/:id/edit`, `/ai/chat`, `/ai/usage`, `/jobs/create`, `/jobs/track`
 - `pages/<área>/` — cada página segue `Page.tsx`, `api/` (chamadas HTTP), `hooks/` (TanStack Query), `components/`, `types/`
   - `home/`, `library/`, `ai/chat/`, `ai/usage/`, `jobs/create/`, `jobs/track/` (+ `jobs/types`)
 - `components/` — componentes base compartilhados (`ErrorState`, `LoadingState`, `EmptyState`, `MarkdownMessage`, `OptionSelect`, `SearchInput`, `TagInput`, `CategoryPicker`, `DocumentFields`, `MarkdownEditor`, `ConfirmDialog`, `ClockAndTime`, `AppSidebar`)
