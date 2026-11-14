@@ -23,7 +23,7 @@ export interface AiMessage {
 export interface AiChatRequest {
   providerId: string;
   modelId: string;
-  thinkingId: string;
+  thinking: string;
   message: string;
 }
 

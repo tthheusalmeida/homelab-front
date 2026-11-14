@@ -85,7 +85,7 @@ export function ChatPage() {
       const response = await sendMessage({
         providerId: activeProviderId,
         modelId: activeModelId,
-        thinkingId: activeThinkingId,
+        thinking: activeThinkingId,
         message: content,
       });
 
