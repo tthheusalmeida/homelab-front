@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Link, useNavigate } from "react-router";
-import { BookOpen, Plus } from "lucide-react";
+import { BookOpen, Play, Plus } from "lucide-react";
 
 import { Button } from "#ui/button";
 import { Card, CardContent } from "#ui/card";
@@ -12,6 +12,7 @@ import { LoadingState } from "#components/LoadingState";
 
 import { BookCover } from "./components/BookCover";
 import { BookFormDialog } from "./components/BookFormDialog";
+import { BookProgress } from "./components/BookProgress";
 import { useBooks } from "./hooks";
 
 /** Estante: os livros (coleções ordenadas de documentos). */
@@ -72,16 +73,17 @@ export function BooksPage() {
           }
         />
       ) : (
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {books.data.map((book) => (
-            <div key={book.id} className="group relative space-y-3">
+            <div key={book.id} className="group relative space-y-4 text-center">
               <BookCover
                 title={book.title}
                 kind={book.kind}
                 subtitle={book.subtitle}
                 color={book.coverColor}
                 imageUrl={book.coverImageUrl}
-                className="transition-transform group-hover:-translate-y-1"
+                completed={book.completedAt !== null}
+                className="mx-auto max-w-44 transition-transform duration-200 group-hover:-translate-y-1.5"
               />
 
               <div className="space-y-1">
@@ -101,6 +103,23 @@ export function BooksPage() {
                 <p className="text-xs text-muted-foreground">
                   {book.chapterCount} capítulo(s) · {book.moduleCount} módulo(s)
                 </p>
+
+                <BookProgress
+                  read={book.readCount}
+                  total={book.availableCount}
+                  completed={book.completedAt !== null}
+                  completedAt={book.completedAt}
+                  className="pt-1"
+                />
+
+                {book.lastPosition && book.completedAt === null && (
+                  <Link
+                    to={`/library/books/${book.id}?continuar=1`}
+                    className="relative z-10 inline-flex items-center gap-1 pt-1 text-xs font-medium text-primary hover:underline"
+                  >
+                    <Play className="size-3" /> Continuar de onde parou
+                  </Link>
+                )}
               </div>
             </div>
           ))}

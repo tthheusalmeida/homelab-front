@@ -11,6 +11,8 @@ const reading = {
 const detail = { data: undefined as unknown };
 const search = { data: undefined as unknown, isFetching: false };
 const remove = { mutate: vi.fn(), isPending: false, isError: false };
+const setRead = { mutate: vi.fn(), isPending: false, isError: false };
+const savePosition = { mutate: vi.fn(), isPending: false, isError: false };
 const useBookSearchSpy = vi.fn();
 
 vi.mock("./hooks", () => ({
@@ -21,6 +23,13 @@ vi.mock("./hooks", () => ({
     return search;
   },
   useDeleteBook: () => remove,
+  useSetChapterRead: () => setRead,
+  useResetBookProgress: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+    isError: false,
+  }),
+  useSaveBookPosition: () => savePosition,
   useUpdateBook: () => ({ mutate: vi.fn(), isPending: false, isError: false }),
   useCreateBook: () => ({ mutate: vi.fn(), isPending: false, isError: false }),
   useSetBookStructure: () => ({
@@ -51,6 +60,9 @@ const book = {
   subtitle: "Aulas 1 a 10",
   coverColor: "violet",
   coverImageUrl: "",
+  readDocumentIds: [] as string[],
+  lastPosition: null as { documentId: string; elementId: string } | null,
+  completedAt: null as string | null,
   createdAt: "2026-03-05T10:00:00.000Z",
   updatedAt: "2026-03-05T10:00:00.000Z",
 };
@@ -68,6 +80,15 @@ const readingData = () => ({
     },
   ],
 });
+
+/** Abre o menu "Mais ações" e escolhe um item. */
+async function chooseMenuItem(
+  user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
+) {
+  await user.click(screen.getByRole("button", { name: /Mais ações/ }));
+  await user.click(await screen.findByRole("menuitem", { name }));
+}
 
 const renderPage = () =>
   render(
@@ -106,6 +127,8 @@ describe("BookPage", () => {
     search.isFetching = false;
     remove.mutate.mockReset();
     remove.isError = false;
+    setRead.mutate.mockReset();
+    savePosition.mutate.mockReset();
     useBookSearchSpy.mockClear();
   });
 
@@ -256,7 +279,7 @@ describe("BookPage", () => {
     ];
     const user = userEvent.setup();
     renderPage();
-    await user.type(screen.getByLabelText("Pesquisar no livro..."), "linha");
+    await user.type(screen.getByLabelText("Pesquisar no livro"), "linha");
     const heading = screen.getByRole("heading", { name: "Imagens" });
     heading.scrollIntoView = vi.fn();
 
@@ -273,7 +296,7 @@ describe("BookPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.type(screen.getByLabelText("Pesquisar no livro..."), "docker");
+    await user.type(screen.getByLabelText("Pesquisar no livro"), "docker");
 
     await vi.waitFor(() =>
       expect(useBookSearchSpy).toHaveBeenLastCalledWith("b1", "docker"),
@@ -310,7 +333,7 @@ describe("BookPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.click(screen.getByRole("button", { name: /Detalhes/ }));
+    await chooseMenuItem(user, /Detalhes/);
 
     expect(screen.getByText("Detalhes do livro")).toBeInTheDocument();
     expect(screen.getByText("Leitura estimada")).toBeInTheDocument();
@@ -373,6 +396,7 @@ describe("BookPage", () => {
     const tops: Record<string, number> = {
       "chapter-d1": 10,
       "chapter-d2": 900,
+      "d2-redes": 910,
     };
     vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
       function (this: Element) {
@@ -397,7 +421,7 @@ describe("BookPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.click(screen.getByRole("button", { name: /Organizar/ }));
+    await chooseMenuItem(user, /Organizar/);
 
     expect(screen.getByText(/Organizar “Pós em DevOps”/)).toBeInTheDocument();
   });
@@ -406,7 +430,7 @@ describe("BookPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.click(screen.getByRole("button", { name: /Editar dados/ }));
+    await chooseMenuItem(user, /Editar dados/);
 
     expect(screen.getByText("Editar livro")).toBeInTheDocument();
     expect(screen.getByLabelText("Título")).toHaveValue("Pós em DevOps");
@@ -419,7 +443,7 @@ describe("BookPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.click(screen.getByRole("button", { name: /Excluir livro/ }));
+    await chooseMenuItem(user, /Excluir livro/);
     expect(screen.getByText("Excluir o livro?")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Excluir" }));
 
@@ -430,7 +454,7 @@ describe("BookPage", () => {
   it("when deleting is cancelled, should keep the book", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.click(screen.getByRole("button", { name: /Excluir livro/ }));
+    await chooseMenuItem(user, /Excluir livro/);
 
     await user.click(screen.getByRole("button", { name: "Cancelar" }));
 
@@ -442,7 +466,7 @@ describe("BookPage", () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.click(screen.getByRole("button", { name: /Excluir livro/ }));
+    await chooseMenuItem(user, /Excluir livro/);
 
     expect(screen.getByRole("alert")).toHaveTextContent(
       /Não foi possível excluir o livro/,

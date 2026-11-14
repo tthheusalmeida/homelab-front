@@ -36,12 +36,19 @@ const setup = (
   props: Partial<React.ComponentProps<typeof BookSidebar>> = {},
 ) => {
   const handlers = {
-    onQueryChange: vi.fn(),
     onSelectChapter: vi.fn(),
     onSelectHit: vi.fn(),
   };
 
-  render(<BookSidebar modules={modules} query="" {...handlers} {...props} />);
+  render(
+    <BookSidebar
+      modules={modules}
+      query=""
+      findBar={<input aria-label="campo de busca" />}
+      {...handlers}
+      {...props}
+    />,
+  );
 
   return { ...handlers, user: userEvent.setup() };
 };
@@ -66,12 +73,16 @@ describe("BookSidebar", () => {
     expect(onSelectChapter).toHaveBeenCalledWith("d2");
   });
 
-  it("when typing in the search, should report the query", async () => {
-    const { onQueryChange, user } = setup();
+  it("when rendered, should show the given find bar at the top", () => {
+    setup();
 
-    await user.type(screen.getByLabelText("Pesquisar no livro..."), "d");
+    const aside = screen.getByRole("complementary", {
+      name: "Painel do livro",
+    });
 
-    expect(onQueryChange).toHaveBeenCalledWith("d");
+    expect(aside.firstElementChild).toBe(
+      within(aside).getByLabelText("campo de busca"),
+    );
   });
 
   it("when the query is short, should not show the results card", () => {
@@ -127,7 +138,7 @@ describe("BookSidebar — active chapter", () => {
         modules={modules}
         activeChapterId="d2"
         query=""
-        onQueryChange={() => {}}
+        findBar={null}
         onSelectChapter={() => {}}
         onSelectHit={() => {}}
       />,
@@ -140,5 +151,27 @@ describe("BookSidebar — active chapter", () => {
     expect(
       screen.getByRole("button", { name: "1. Docker" }),
     ).not.toHaveAttribute("aria-current");
+  });
+});
+
+describe("BookSidebar — read chapters", () => {
+  it("when chapters were read, should mark them in the summary", () => {
+    render(
+      <BookSidebar
+        modules={modules}
+        readIds={["d1"]}
+        query=""
+        findBar={null}
+        onSelectChapter={() => {}}
+        onSelectHit={() => {}}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "1. Docker, lido" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "2. Redes" }),
+    ).toBeInTheDocument();
   });
 });

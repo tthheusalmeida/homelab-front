@@ -37,6 +37,9 @@ const book = (): BookDetail => ({
   subtitle: "",
   coverColor: "blue",
   coverImageUrl: "",
+  readDocumentIds: [],
+  lastPosition: null,
+  completedAt: null,
   createdAt: "2026-03-05T10:00:00.000Z",
   updatedAt: "2026-03-05T10:00:00.000Z",
   modules: [

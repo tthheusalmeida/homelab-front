@@ -7,11 +7,19 @@ import {
   getBook,
   getBooks,
   readBook,
+  resetBookProgress,
+  saveBookPosition,
   searchBook,
+  setChapterRead,
   setBookStructure,
   updateBook,
 } from "./api";
-import type { CreateBookInput, ModuleDraft, UpdateBookInput } from "./types";
+import type {
+  BookPosition,
+  CreateBookInput,
+  ModuleDraft,
+  UpdateBookInput,
+} from "./types";
 
 // Fica dentro da chave "library": qualquer mudança na biblioteca (ex.: um
 // documento removido) também atualiza os livros.
@@ -108,6 +116,50 @@ export function useAddBookChapter() {
       documentId: string;
       moduleId?: string;
     }) => addBookChapter(id, documentId, moduleId),
+    onSuccess: invalidate,
+  });
+}
+
+/** Marca ou desmarca um capítulo como lido (atualiza leitura, detalhes e estante). */
+export function useSetChapterRead() {
+  const invalidate = useInvalidateBooks();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      documentId,
+      read,
+    }: {
+      id: string;
+      documentId: string;
+      read: boolean;
+    }) => setChapterRead(id, documentId, read),
+    onSuccess: invalidate,
+  });
+}
+
+/**
+ * Guarda o último ponto lido. Não invalida a leitura (o texto não muda e
+ * recarregar a cada rolagem seria desperdício); a estante pega o valor novo
+ * na próxima vez que for aberta.
+ */
+export function useSaveBookPosition() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, position }: { id: string; position: BookPosition }) =>
+      saveBookPosition(id, position),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: [...BOOKS_KEY, "list"] }),
+  });
+}
+
+/** Zera o progresso do livro de uma vez (atualiza leitura, detalhes e estante). */
+export function useResetBookProgress() {
+  const invalidate = useInvalidateBooks();
+
+  return useMutation({
+    mutationFn: (id: string) => resetBookProgress(id),
     onSuccess: invalidate,
   });
 }

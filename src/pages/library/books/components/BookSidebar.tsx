@@ -1,16 +1,25 @@
-import { Card, CardContent, CardHeader, CardTitle } from "#ui/card";
+import type { ReactNode } from "react";
 
-import { SearchInput } from "#components/SearchInput";
+import { Card, CardContent, CardHeader, CardTitle } from "#ui/card";
 
 import type { BookReading, BookSearchHit } from "../types";
 import { BookOutline } from "./BookOutline";
+import { BookProgressCard } from "./BookProgressCard";
 
 interface BookSidebarProps {
   modules: BookReading["modules"];
   /** Capítulo sendo lido agora (id do documento). */
   activeChapterId?: string;
+  /** Capítulos já lidos (id do documento). */
+  readIds?: string[];
+  /** Quantos capítulos disponíveis já foram lidos (para a barra de progresso). */
+  readCount?: number;
+  /** Quando o livro foi concluído; com ele o quadro mostra a data no lugar do progresso. */
+  completedAt?: string | null;
+  /** Texto digitado na busca (decide se os resultados aparecem). */
   query: string;
-  onQueryChange: (value: string) => void;
+  /** Campo de busca (com próxima/anterior); vem de fora porque o modo leitura usa o mesmo. */
+  findBar: ReactNode;
   /** `undefined` enquanto a pesquisa não rodou (consulta curta). */
   hits?: BookSearchHit[];
   isSearching?: boolean;
@@ -25,24 +34,33 @@ interface BookSidebarProps {
 export function BookSidebar({
   modules,
   activeChapterId,
+  readIds,
+  readCount = 0,
+  completedAt = null,
   query,
-  onQueryChange,
+  findBar,
   hits,
   isSearching,
   onSelectChapter,
   onSelectHit,
 }: BookSidebarProps) {
   const searching = query.trim().length >= 2;
+  const totalChapters = modules.reduce(
+    (sum, module) => sum + module.chapters.length,
+    0,
+  );
 
   return (
     <aside
       aria-label="Painel do livro"
       className="space-y-4 lg:sticky lg:top-4 lg:self-start"
     >
-      <SearchInput
-        value={query}
-        onChange={onQueryChange}
-        placeholder="Pesquisar no livro..."
+      {findBar}
+
+      <BookProgressCard
+        read={readCount}
+        total={totalChapters}
+        completedAt={completedAt}
       />
 
       {searching && (
@@ -103,6 +121,7 @@ export function BookSidebar({
           <BookOutline
             modules={modules}
             activeChapterId={activeChapterId}
+            readIds={readIds}
             onSelectChapter={onSelectChapter}
             className="max-h-[50dvh]"
           />

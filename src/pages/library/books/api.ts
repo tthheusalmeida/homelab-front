@@ -2,6 +2,7 @@ import { api } from "#lib/api";
 
 import type {
   BookDetail,
+  BookPosition,
   BookReading,
   BookSearchHit,
   BookSummary,
@@ -58,6 +59,25 @@ export function addBookChapter(
   return api<BookDetail>(`${path(id)}/chapters`, {
     method: "POST",
     body: JSON.stringify(moduleId ? { documentId, moduleId } : { documentId }),
+  });
+}
+
+export function setChapterRead(id: string, documentId: string, read: boolean) {
+  return api<BookDetail>(
+    `${path(id)}/chapters/${encodeURIComponent(documentId)}/read`,
+    { method: "PUT", body: JSON.stringify({ read }) },
+  );
+}
+
+/** Zera o progresso do livro (capítulos lidos, posição e conclusão). */
+export function resetBookProgress(id: string) {
+  return api<BookDetail>(`${path(id)}/progress`, { method: "DELETE" });
+}
+
+export function saveBookPosition(id: string, position: BookPosition) {
+  return api<BookDetail>(`${path(id)}/position`, {
+    method: "PUT",
+    body: JSON.stringify(position),
   });
 }
 

@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 import { cn } from "#lib/utils";
 
 import type { BookReading } from "../types";
@@ -6,6 +8,8 @@ interface BookOutlineProps {
   modules: BookReading["modules"];
   /** Capítulo sendo lido agora (id do documento); fica destacado. */
   activeChapterId?: string;
+  /** Capítulos já lidos (id do documento): ganham um visto no sumário. */
+  readIds?: string[];
   onSelectChapter: (documentId: string) => void;
   className?: string;
 }
@@ -14,6 +18,7 @@ interface BookOutlineProps {
 export function BookOutline({
   modules,
   activeChapterId,
+  readIds = [],
   onSelectChapter,
   className,
 }: BookOutlineProps) {
@@ -34,6 +39,7 @@ export function BookOutline({
               {module.chapters.map((chapter) => {
                 chapterNumber += 1;
                 const active = chapter.documentId === activeChapterId;
+                const read = readIds.includes(chapter.documentId);
 
                 return (
                   <li key={chapter.documentId}>
@@ -42,13 +48,27 @@ export function BookOutline({
                       aria-current={active ? "location" : undefined}
                       onClick={() => onSelectChapter(chapter.documentId)}
                       className={cn(
-                        "w-full text-left text-sm hover:underline",
+                        "flex w-full items-start gap-2 text-left text-sm hover:underline",
                         active
                           ? "font-semibold text-primary"
                           : "text-muted-foreground hover:text-foreground",
                       )}
                     >
-                      {chapterNumber}. {chapter.title}
+                      <span className="min-w-0 flex-1">
+                        {chapterNumber}. {chapter.title}
+                      </span>
+
+                      <span
+                        data-slot="read-mark"
+                        className="flex size-4 shrink-0 items-center justify-center"
+                      >
+                        {read && (
+                          <>
+                            <Check className="size-3.5 text-emerald-500" />
+                            <span className="sr-only">, lido</span>
+                          </>
+                        )}
+                      </span>
                     </button>
                   </li>
                 );

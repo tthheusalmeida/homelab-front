@@ -22,12 +22,29 @@ export interface BookCoverData {
   coverImageUrl: string;
 }
 
-export interface BookSummary extends BookCoverData {
+/** Último ponto lido: o capítulo e o elemento (título) que estava na tela. */
+export interface BookPosition {
+  documentId: string;
+  elementId: string;
+}
+
+/** Progresso de leitura guardado no livro. */
+export interface BookProgress {
+  /** Quando todos os capítulos foram lidos ("concluído"); null se não. */
+  completedAt: string | null;
+  lastPosition: BookPosition | null;
+}
+
+export interface BookSummary extends BookCoverData, BookProgress {
   id: string;
   title: string;
   kind: BookKind;
   description: string;
   chapterCount: number;
+  /** Capítulos que ainda existem na biblioteca (base do progresso). */
+  availableCount: number;
+  /** Quantos desses já foram lidos. */
+  readCount: number;
   moduleCount: number;
   updatedAt: string;
   /** Só quando a lista é pedida para um documento. */
@@ -49,7 +66,9 @@ export interface BookModule {
   chapters: BookChapter[];
 }
 
-export interface BookDetail extends BookCoverData {
+export interface BookDetail extends BookCoverData, BookProgress {
+  /** Ids dos capítulos (documentos) marcados como lidos. */
+  readDocumentIds: string[];
   id: string;
   title: string;
   kind: BookKind;
