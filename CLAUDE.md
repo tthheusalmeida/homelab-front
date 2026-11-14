@@ -29,7 +29,7 @@ SPA React 19 + Vite 8 + TypeScript, Tailwind 4, shadcn/base-ui, TanStack Query, 
 - `components/` — componentes base compartilhados (`ErrorState`, `LoadingState`, `EmptyState`, `MarkdownMessage`, `OptionSelect`, `SearchInput`, `TagInput`, `CategoryPicker`, `DocumentFields`, `MarkdownEditor`, `ConfirmDialog`, `ClockAndTime`, `AppSidebar`)
 - `ui/` — apenas primitivos shadcn/base-ui (não alterar sem necessidade; componentes base próprios vão em `components/`)
 - `lib/` — `api.ts`, `format.ts`, `queryClient.ts`, `utils.ts` (`cn`)
-- `hooks/` — `use-mobile.ts`, `use-debounced-value.ts`
+- `hooks/` — `use-mobile.ts`, `use-debounced-value.ts`, `use-stored-state.ts`
 - `test/` — `setup.ts` (jest-dom, polyfills de jsdom) e `utils.tsx` (`createWrapper`, `renderWithQuery`)
 
 ## Convenções

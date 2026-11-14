@@ -12,9 +12,12 @@ import { LoadingState } from "#components/LoadingState";
 import { OptionSelect } from "#components/OptionSelect";
 import { SearchInput } from "#components/SearchInput";
 import { useDebouncedValue } from "#hooks/use-debounced-value";
+import { useStoredState } from "#hooks/use-stored-state";
 
 import { CategoryTree } from "./components/CategoryTree";
 import { DocumentCard } from "./components/DocumentCard";
+import { TagFilter } from "./components/TagFilter";
+import { ViewToggle, viewModes, type ViewMode } from "./components/ViewToggle";
 import { useCategories, useDocuments, useTags } from "./hooks/useLibrary";
 import {
   documentSourceLabels,
@@ -52,6 +55,11 @@ export function LibraryPage() {
   const [source, setSource] = useState<DocumentSource>();
   const [tags, setTags] = useState<string[]>([]);
   const [sort, setSort] = useState<SortOption>("title");
+  const [view, setView] = useStoredState<ViewMode>(
+    "library:view",
+    "list",
+    viewModes,
+  );
 
   const q = useDebouncedValue(search);
 
@@ -170,22 +178,18 @@ export function LibraryPage() {
               Limpar filtros
             </Button>
           )}
+
+          <div className="ml-auto">
+            <ViewToggle value={view} onChange={setView} />
+          </div>
         </div>
 
         {(tagList.data?.length ?? 0) > 0 && (
-          <div className="flex flex-wrap gap-1.5" aria-label="Filtrar por tag">
-            {tagList.data!.map(({ tag, count }) => (
-              <Button
-                key={tag}
-                size="xs"
-                variant={tags.includes(tag) ? "default" : "outline"}
-                aria-pressed={tags.includes(tag)}
-                onClick={() => toggleTag(tag)}
-              >
-                {tag} · {count}
-              </Button>
-            ))}
-          </div>
+          <TagFilter
+            tags={tagList.data!}
+            selected={tags}
+            onToggle={toggleTag}
+          />
         )}
       </div>
 
@@ -232,9 +236,23 @@ export function LibraryPage() {
                 {documents.data.length} documento(s)
               </p>
 
-              {documents.data.map((document) => (
-                <DocumentCard key={document.id} document={document} />
-              ))}
+              <div
+                className={
+                  view === "grid"
+                    ? "grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+                    : view === "list"
+                      ? "space-y-1.5"
+                      : "space-y-3"
+                }
+              >
+                {documents.data.map((document) => (
+                  <DocumentCard
+                    key={document.id}
+                    document={document}
+                    variant={view}
+                  />
+                ))}
+              </div>
             </>
           )}
         </section>

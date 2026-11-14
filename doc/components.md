@@ -11,7 +11,7 @@
 ## Onde ficam
 - `src/ui/` — primitivos shadcn/base-ui: `badge`, `button`, `card`, `chart`, `collapsible`, `dialog`, `input`, `label`, `scroll-area`, `select`, `separator`, `sheet`, `sidebar`, `skeleton`, `table`, `textarea`, `tooltip`. Só recebe primitivos vindos do CLI do shadcn (`components.json`); componentes base próprios do projeto não vão aqui.
 - `src/components/` — **local dos componentes base do projeto**, compartilhados entre páginas: `ErrorState` (erro com ação opcional), `LoadingState` (texto com pontinhos), `EmptyState` (estado vazio com ícone, texto e ação), `MarkdownMessage` (Markdown GFM; links em nova aba, imagens responsivas, sem HTML cru; `headingIds` dá id aos títulos para âncoras), `OptionSelect` (select de opções `{id,label}`), `SearchInput` (campo de pesquisa), `TagInput` (tags em chips), `CategoryPicker` (categoria em até 4 níveis com sugestões), `DocumentFields` (título, categoria e tags de um documento, com os textos que explicam pasta x tag), `MarkdownEditor` (editor Markdown com prévia e atalhos de imagem por URL e tabela), `ConfirmDialog` (confirmação, com modo destrutivo e `errorMessage` opcional), `ClockAndTime`, `AppSidebar`.
-- `src/hooks/` — `use-mobile`, `use-debounced-value`.
+- `src/hooks/` — `use-mobile`, `use-debounced-value`, `use-stored-state` (estado de texto no localStorage, com valores permitidos e tolerante a falha).
 - `pages/<área>/components/` — específicos da página, sem reuso; ao surgir o segundo uso, mova/crie o componente em `src/components/`.
 
 ## Padrões já estabelecidos (reutilize)

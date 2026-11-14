@@ -146,6 +146,42 @@ describe("DocumentCard", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("when there are more than 3 tags, should show 3 and +N", () => {
+    setup(doc({ tags: ["a", "b", "c", "d", "e"] }));
+
+    expect(screen.queryByText("d")).not.toBeInTheDocument();
+    expect(screen.getByText("+2")).toBeInTheDocument();
+  });
+
+  describe("list variant", () => {
+    const setupList = (document = doc()) =>
+      render(
+        <MemoryRouter>
+          <DocumentCard document={document} variant="list" />
+        </MemoryRouter>,
+      );
+
+    it("when rendered, should show title, type, category and date but not the preview", () => {
+      setupList();
+
+      expect(
+        screen.getByRole("link", { name: "Práticas da Primeira Maneira" }),
+      ).toHaveAttribute("href", "/library/id1");
+      expect(screen.getByText("Resumo")).toBeInTheDocument();
+      expect(screen.getByText("DevOps")).toBeInTheDocument();
+      expect(screen.getByText(/05\/03\/2026/)).toBeInTheDocument();
+      expect(
+        screen.queryByText("Resumo do conteúdo"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("when matched by content, should say so", () => {
+      setupList(doc({ matchedIn: "content" }));
+
+      expect(screen.getByText(/Encontrado no conteúdo/)).toBeInTheDocument();
+    });
+  });
+
   it("when actions are given, should render them", () => {
     setup(doc(), <button>Descartar</button>);
 

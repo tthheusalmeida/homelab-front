@@ -10,6 +10,8 @@ Os dados vêm de `/library/*` do back (ver `back/doc/library.md`). Qualquer alte
 - **Filtros combináveis:** tipo (Resumo, Transcrição, Criação), origem (Vídeo, Manual), tags (botões; várias tags exigem todas) e categoria (árvore à esquerda).
 - **Árvore de categorias:** "Todas as categorias" + níveis expansíveis com contagem de documentos (inclui os níveis abaixo). Selecionar um nível filtra por ele e por tudo abaixo; os ancestrais da categoria selecionada ficam abertos.
 - A pesquisa fica na mesma linha dos filtros (largura de 16rem em telas largas), não em uma linha própria.
+- **Tags enxutas (`TagFilter`):** a barra mostra só as 8 tags mais usadas (empate por nome) mais as selecionadas; as demais ficam no botão "+N tags", que abre a janela "Todas as tags" com busca (sem acento/caixa) e os mesmos botões de alternar.
+- **Modos de visualização (`ViewToggle`):** Lista (padrão; uma linha por documento com título, tipo, categoria, até 3 tags no desktop e data, sem prévia), Cartões (com prévia) e Grade (cartões em 2 a 3 colunas). A escolha fica guardada no navegador (`library:view`). Em todos os modos, mais de 3 tags viram "+N" (a lista completa vai no title).
 - O texto do documento tem largura máxima de leitura (`max-w-3xl`) e margem lateral.
 - "Limpar filtros" só aparece com algum filtro ativo e limpa pesquisa, categoria, tipo, origem e tags (a ordenação é mantida).
 - Enquanto uma nova pesquisa carrega, a lista anterior continua na tela.

@@ -111,6 +111,7 @@ describe("LibraryPage", () => {
     tags.data = [{ tag: "devops", count: 2 }];
     vi.mocked(documents.refetch).mockReset();
     useDocumentsSpy.mockClear();
+    window.localStorage.clear();
   });
 
   it("when opened with a category in the navigation state, should filter by it", () => {
@@ -272,6 +273,39 @@ describe("LibraryPage", () => {
       tags: [],
       category: [],
     });
+  });
+
+  it("when opened, should list the documents in the compact list view", () => {
+    renderPage();
+
+    expect(screen.getByRole("button", { name: "Lista" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+
+  it("when another view is chosen, should switch the layout and remember it", async () => {
+    const user = userEvent.setup();
+    const { unmount } = renderPage();
+
+    await user.click(screen.getByRole("button", { name: "Grade" }));
+    unmount();
+    renderPage();
+
+    expect(screen.getByRole("button", { name: "Grade" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+
+  it("when there are many tags, should show only the most used with a +N tags button", () => {
+    tags.data = Array.from({ length: 12 }, (_, index) => ({
+      tag: `t${index}`,
+      count: 20 - index,
+    }));
+    renderPage();
+
+    expect(screen.getByRole("button", { name: "+4 tags" })).toBeInTheDocument();
   });
 
   it("when there are no tags, should not render the tag filter", () => {
