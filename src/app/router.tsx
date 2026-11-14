@@ -7,6 +7,7 @@ import { HomePage } from "../pages/home/HomePage";
 import { ChatPage } from "../pages/ai/chat/ChatPage";
 import { UsagePage } from "../pages/ai/usage/UsagePage";
 
+import { LibraryLayout } from "../pages/library/LibraryLayout";
 import { LibraryPage } from "../pages/library/LibraryPage";
 import { InboxPage } from "../pages/library/InboxPage";
 import { NewArticlePage } from "../pages/library/NewArticlePage";
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "library",
+        element: <LibraryLayout />,
         children: [
           {
             index: true,
