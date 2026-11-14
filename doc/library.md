@@ -34,6 +34,15 @@ Os dados vêm de `/library/*` do back (ver `back/doc/library.md`). Qualquer alte
 - Imagens: apenas por URL (`![alt](https://...)`); não há upload.
 - Ao salvar, o artigo nasce publicado e a tela abre o documento criado. Erro mostra mensagem e mantém o formulário.
 
+## Sincronização com as pastas (`LibraryLayout` + `useLibrarySync`)
+- Todas as rotas `/library/*` ficam dentro de `LibraryLayout`, que chama `POST library/reindex` ao entrar na Biblioteca e sempre que a janela volta ao foco (no mínimo 5 s entre uma e outra) e, depois, atualiza todas as listas, árvore e tags.
+- Serve para quando arquivos são movidos de pasta direto no disco: a categoria é a pasta (regra do back), então a mudança aparece sem reiniciar nada. Falha na sincronização é silenciosa; o botão Reindexar da Entrada continua existindo.
+
+## Sugestão com IA (`SuggestionPanel`)
+- No topo do diálogo Adicionar/Readicionar da Entrada há o botão "Sugerir com IA" e um seletor de modelo do **Gemini** (lista de `ai/providers/gemini/models`). O padrão é "Mais barato (automático)", que não envia modelo e deixa o back escolher o de menor custo.
+- Ao receber a sugestão, **substitui** título, categoria e tags do formulário (inclusive o que já estava digitado) e mostra "Sugestão preenchida com <modelo>". Nada é salvo: o usuário revisa, ajusta e só então clica em Adicionar.
+- Enquanto pede, o botão e o seletor ficam desabilitados; erro mostra "Não foi possível obter a sugestão. Tente novamente." e mantém o formulário como estava.
+
 ## Seleção de categoria (`CategoryPicker`)
 - Um campo por nível, aparecendo conforme o anterior é preenchido (Categoria, Subcategoria, Subcategoria 2, Subcategoria 3).
 - Cada campo sugere as categorias já existentes naquele ponto da árvore (ignorando maiúscula e acento) e aceita digitar uma nova; nome que não existe mostra "Nova categoria".
