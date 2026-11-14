@@ -65,6 +65,41 @@ describe("MarkdownMessage", () => {
     expect(screen.getByRole("listitem")).toHaveTextContent("item");
   });
 
+  it("when content has a link, should open it in a new tab without leaking the referrer", () => {
+    render(<MarkdownMessage content="[site](https://exemplo.com)" />);
+
+    const link = screen.getByRole("link", { name: "site" });
+    expect(link).toHaveAttribute("href", "https://exemplo.com");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("when content has an image url, should render it responsive and lazy", () => {
+    render(<MarkdownMessage content="![logo](https://exemplo.com/a.png)" />);
+
+    const image = screen.getByRole("img", { name: "logo" });
+    expect(image).toHaveAttribute("src", "https://exemplo.com/a.png");
+    expect(image).toHaveAttribute("loading", "lazy");
+    expect(image).toHaveClass("max-w-full");
+  });
+
+  it("when content has raw html, should not render it as html", () => {
+    const { container } = render(
+      <MarkdownMessage content={"<script>alert(1)</script><b>x</b>"} />,
+    );
+
+    expect(container.querySelector("script")).toBeNull();
+    expect(container.querySelector("b")).toBeNull();
+  });
+
+  it("when content has a javascript link, should not keep the dangerous href", () => {
+    render(<MarkdownMessage content="[x](javascript:alert(1))" />);
+
+    expect(screen.getByText("x").closest("a")?.getAttribute("href") ?? "").not.toContain(
+      "javascript",
+    );
+  });
+
   it("when content has a GFM table, should render a table", () => {
     render(<MarkdownMessage content={"| a | b |\n|---|---|\n| 1 | 2 |"} />);
 

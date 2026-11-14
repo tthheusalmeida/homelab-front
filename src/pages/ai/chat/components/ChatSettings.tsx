@@ -1,6 +1,6 @@
 import type { AiModel, AiProvider, AiThinkingOption } from "../types/chat";
 
-import { ChatSettingsSelect } from "./ChatSettingsSelect";
+import { OptionSelect } from "#components/OptionSelect";
 
 interface ChatSettingsProps {
   providers: AiProvider[];
@@ -34,7 +34,7 @@ export function ChatSettings({
 }: ChatSettingsProps) {
   return (
     <div className="flex items-center gap-2">
-      <ChatSettingsSelect
+      <OptionSelect
         value={providerId}
         options={providers}
         placeholder="Provedor"
@@ -44,7 +44,7 @@ export function ChatSettings({
         onValueChange={onProviderChange}
       />
 
-      <ChatSettingsSelect
+      <OptionSelect
         value={modelId}
         options={models}
         placeholder="Modelo"
@@ -55,7 +55,7 @@ export function ChatSettings({
         onValueChange={onModelChange}
       />
 
-      <ChatSettingsSelect
+      <OptionSelect
         value={thinkingId}
         options={thinkingOptions}
         placeholder="Thinking"

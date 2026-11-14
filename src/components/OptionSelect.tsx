@@ -8,14 +8,14 @@ import {
   SelectLabel,
 } from "#ui/select";
 
-interface ChatSettingsOption {
+export interface SelectOption {
   id: string;
   label: string;
 }
 
-interface ChatSettingsSelectProps {
+interface OptionSelectProps {
   value?: string;
-  options: ChatSettingsOption[];
+  options: SelectOption[];
   placeholder: string;
   label?: string;
 
@@ -26,7 +26,7 @@ interface ChatSettingsSelectProps {
   onValueChange: (value: string | null) => void;
 }
 
-export function ChatSettingsSelect({
+export function OptionSelect({
   value,
   options,
   placeholder,
@@ -35,7 +35,7 @@ export function ChatSettingsSelect({
   contentWidth = "w-48",
   disabled,
   onValueChange,
-}: ChatSettingsSelectProps) {
+}: OptionSelectProps) {
   const selectedOption = options.find((option) => option.id === value);
 
   return (

@@ -47,6 +47,14 @@ describe("api", () => {
     });
   });
 
+  it("when the response is 204 No Content, should return undefined without reading a body", async () => {
+    const json = vi.fn();
+    mockFetch({ ok: true, status: 204, json });
+
+    await expect(api("/x", { method: "DELETE" })).resolves.toBeUndefined();
+    expect(json).not.toHaveBeenCalled();
+  });
+
   it("when the response is not ok, should throw an error with the status", async () => {
     mockFetch({ ok: false, status: 500 });
 

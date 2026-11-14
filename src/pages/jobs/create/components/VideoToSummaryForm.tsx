@@ -10,8 +10,7 @@ import { useAiModels } from "../../../ai/chat/hooks/useAiModels";
 import { useAiProviders } from "../../../ai/chat/hooks/useAiProviders";
 import { useAiThinking } from "../../../ai/chat/hooks/useAiThinking";
 import { useCreateVideoToSummary } from "../hooks/useCreateVideoToSummary";
-// TODO ChatSettingsSelect -> Create a component to select provider, model and thinking instead of use Chat Settings Select
-import { ChatSettingsSelect } from "../../../ai/chat/components/ChatSettingsSelect";
+import { OptionSelect } from "#components/OptionSelect";
 
 export function VideoToSummaryForm() {
   const [url, setUrl] = useState("");
@@ -84,7 +83,7 @@ export function VideoToSummaryForm() {
       </div>
 
       <div className="flex items-center gap-2">
-        <ChatSettingsSelect
+        <OptionSelect
           value={providerId}
           options={providers}
           placeholder="Provedor"
@@ -95,7 +94,7 @@ export function VideoToSummaryForm() {
           onValueChange={handleProviderChange}
         />
 
-        <ChatSettingsSelect
+        <OptionSelect
           value={modelId}
           options={models}
           placeholder="Modelo"
@@ -106,7 +105,7 @@ export function VideoToSummaryForm() {
           onValueChange={handleModelChange}
         />
 
-        <ChatSettingsSelect
+        <OptionSelect
           value={thinkingId}
           options={thinkingOptions}
           placeholder="Thinking"
