@@ -59,7 +59,10 @@ describe("VideoToTranscriptForm", () => {
     );
     await user.click(screen.getByRole("button", { name: /criar/i }));
 
-    expect(mutate).toHaveBeenCalledWith({ url: "https://x.com/v.mp4" });
+    expect(mutate).toHaveBeenCalledWith(
+      { url: "https://x.com/v.mp4" },
+      expect.any(Object),
+    );
   });
 
   it("when title, category and tags are filled, should send them with the url", async () => {
@@ -76,12 +79,15 @@ describe("VideoToTranscriptForm", () => {
     await user.type(screen.getByLabelText("Adicionar tag"), "docker{Enter}");
     await user.click(screen.getByRole("button", { name: /criar/i }));
 
-    expect(mutate).toHaveBeenCalledWith({
-      url: "https://x.com/v.mp4",
-      title: "Aula 3",
-      category: ["Tecnologia", "DevOps"],
-      tags: ["docker"],
-    });
+    expect(mutate).toHaveBeenCalledWith(
+      {
+        url: "https://x.com/v.mp4",
+        title: "Aula 3",
+        category: ["Tecnologia", "DevOps"],
+        tags: ["docker"],
+      },
+      expect.any(Object),
+    );
   });
 
   it("when the document fields are left empty, should not send title, category or tags", async () => {
@@ -95,7 +101,10 @@ describe("VideoToTranscriptForm", () => {
     );
     await user.click(screen.getByRole("button", { name: /criar/i }));
 
-    expect(mutate).toHaveBeenCalledWith({ url: "https://x.com/v.mp4" });
+    expect(mutate).toHaveBeenCalledWith(
+      { url: "https://x.com/v.mp4" },
+      expect.any(Object),
+    );
   });
 
   it("when the title is empty, should show the default title as placeholder", () => {

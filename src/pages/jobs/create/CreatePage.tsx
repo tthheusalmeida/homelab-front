@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Link } from "react-router";
+
 import {
   Dialog,
   DialogContent,
@@ -7,6 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "#ui/dialog";
+import { Button, buttonVariants } from "#ui/button";
 import { Card, CardContent } from "#ui/card";
 
 import { ErrorState } from "#components/ErrorState";
@@ -20,6 +23,8 @@ import { type JobType } from "../types/job.types";
 
 export function CreatePage() {
   const [selectedJobType, setSelectedJobType] = useState<JobType | null>(null);
+  // Tipo do último job criado (avisa na tela depois que a janela fecha).
+  const [createdLabel, setCreatedLabel] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useJobTypes();
 
@@ -55,7 +60,42 @@ export function CreatePage() {
           </p>
         </div>
 
-        <JobTypeList jobTypes={data} onSelect={setSelectedJobType} />
+        {createdLabel && (
+          <div
+            role="status"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card px-4 py-3 text-sm"
+          >
+            <span>
+              Job criado: <strong>{createdLabel}</strong>. Acompanhe o andamento
+              na tela Acompanhar.
+            </span>
+
+            <div className="flex gap-2">
+              <Link
+                to="/jobs/track"
+                className={buttonVariants({ size: "sm", variant: "secondary" })}
+              >
+                Acompanhar
+              </Link>
+
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setCreatedLabel(null)}
+              >
+                Dispensar
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <JobTypeList
+          jobTypes={data}
+          onSelect={(jobType) => {
+            setCreatedLabel(null);
+            setSelectedJobType(jobType);
+          }}
+        />
       </div>
 
       <Dialog
@@ -77,7 +117,17 @@ export function CreatePage() {
             </DialogDescription>
           </DialogHeader>
 
-          {selectedJobType && <JobForm jobType={selectedJobType} />}
+          {selectedJobType && (
+            <JobForm
+              jobType={selectedJobType}
+              onCreated={() => {
+                // Fecha a janela: ao desmontar, o formulário é descartado e a
+                // próxima abertura começa limpa (sem risco de criar o job duas vezes).
+                setCreatedLabel(selectedJobType.label);
+                setSelectedJobType(null);
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </>

@@ -89,16 +89,19 @@ describe("VideoToSummaryForm — document fields", () => {
     await user.type(screen.getByLabelText("Adicionar tag"), "devops{Enter}");
     await user.click(screen.getByRole("button", { name: /criar/i }));
 
-    expect(mutate).toHaveBeenCalledWith({
-      url: "https://x.com/v.mp4",
-      providerId: "gemini",
-      modelId: "m1",
-      thinking: "off",
-      detail: "detailed",
-      title: "Práticas",
-      category: ["Tecnologia"],
-      tags: ["devops"],
-    });
+    expect(mutate).toHaveBeenCalledWith(
+      {
+        url: "https://x.com/v.mp4",
+        providerId: "gemini",
+        modelId: "m1",
+        thinking: "off",
+        detail: "detailed",
+        title: "Práticas",
+        category: ["Tecnologia"],
+        tags: ["devops"],
+      },
+      expect.any(Object),
+    );
   });
 
   it("when the document fields are empty, should send only url and model choice", async () => {
@@ -112,13 +115,16 @@ describe("VideoToSummaryForm — document fields", () => {
     await chooseModel(user);
     await user.click(screen.getByRole("button", { name: /criar/i }));
 
-    expect(mutate).toHaveBeenCalledWith({
-      url: "https://x.com/v.mp4",
-      providerId: "gemini",
-      modelId: "m1",
-      thinking: "off",
-      detail: "detailed",
-    });
+    expect(mutate).toHaveBeenCalledWith(
+      {
+        url: "https://x.com/v.mp4",
+        providerId: "gemini",
+        modelId: "m1",
+        thinking: "off",
+        detail: "detailed",
+      },
+      expect.any(Object),
+    );
   });
 
   it("when a detail level is chosen, should send it", async () => {
@@ -130,11 +136,15 @@ describe("VideoToSummaryForm — document fields", () => {
       "https://x.com/v.mp4",
     );
     await chooseModel(user);
-    await user.selectOptions(screen.getByLabelText("Nível de detalhe"), "study");
+    await user.selectOptions(
+      screen.getByLabelText("Nível de detalhe"),
+      "study",
+    );
     await user.click(screen.getByRole("button", { name: /criar/i }));
 
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({ detail: "study" }),
+      expect.any(Object),
     );
   });
 
@@ -143,9 +153,14 @@ describe("VideoToSummaryForm — document fields", () => {
     render(<VideoToSummaryForm />);
 
     expect(screen.getByLabelText("Nível de detalhe")).toHaveValue("detailed");
-    expect(screen.getByText(/Mantém conceitos, explicações/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Mantém conceitos, explicações/),
+    ).toBeInTheDocument();
 
-    await user.selectOptions(screen.getByLabelText("Nível de detalhe"), "brief");
+    await user.selectOptions(
+      screen.getByLabelText("Nível de detalhe"),
+      "brief",
+    );
 
     expect(screen.getByText(/Só as ideias essenciais/)).toBeInTheDocument();
   });

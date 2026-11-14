@@ -5,14 +5,16 @@ import { VideoToTranscriptForm } from "./VideoToTranscriptForm";
 
 interface JobFormProps {
   jobType: JobType;
+  /** Chamado quando o job foi criado. */
+  onCreated?: () => void;
 }
 
-export function JobForm({ jobType }: JobFormProps) {
+export function JobForm({ jobType, onCreated }: JobFormProps) {
   switch (jobType.type) {
     case JobNameOptions.VIDEO_TO_TRANSCRIPT:
-      return <VideoToTranscriptForm />;
+      return <VideoToTranscriptForm onCreated={onCreated} />;
     case JobNameOptions.VIDEO_TO_SUMMARY:
-      return <VideoToSummaryForm />;
+      return <VideoToSummaryForm onCreated={onCreated} />;
 
     default:
       return null;

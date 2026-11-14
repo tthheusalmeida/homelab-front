@@ -20,7 +20,12 @@ import { useCreateVideoToSummary } from "../hooks/useCreateVideoToSummary";
 import { JobDocumentFields } from "./JobDocumentFields";
 import { OptionSelect } from "#components/OptionSelect";
 
-export function VideoToSummaryForm() {
+interface VideoToSummaryFormProps {
+  /** Chamado quando o job foi criado (a janela usa para fechar e limpar o formulário). */
+  onCreated?: () => void;
+}
+
+export function VideoToSummaryForm({ onCreated }: VideoToSummaryFormProps) {
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string[]>([]);
@@ -43,6 +48,10 @@ export function VideoToSummaryForm() {
     });
 
   const createJob = useCreateVideoToSummary();
+  const [sent, setSent] = useState(false);
+
+  // Travado enquanto envia e depois de enviar: evita criar o mesmo job duas vezes.
+  const locked = createJob.isPending || sent;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,14 +60,26 @@ export function VideoToSummaryForm() {
       return;
     }
 
-    createJob.mutate({
-      url,
-      providerId,
-      modelId,
-      thinking: thinkingId,
-      detail,
-      ...buildDocumentHints({ title, category, tags }),
-    });
+    if (locked) {
+      return;
+    }
+
+    createJob.mutate(
+      {
+        url,
+        providerId,
+        modelId,
+        thinking: thinkingId,
+        detail,
+        ...buildDocumentHints({ title, category, tags }),
+      },
+      {
+        onSuccess: () => {
+          setSent(true);
+          onCreated?.();
+        },
+      },
+    );
   };
 
   const handleProviderChange = (value: string | null) => {
@@ -87,7 +108,7 @@ export function VideoToSummaryForm() {
           placeholder="https://..."
           value={url}
           onChange={(event) => setUrl(event.target.value)}
-          disabled={createJob.isPending}
+          disabled={locked}
           required
         />
 
@@ -104,7 +125,7 @@ export function VideoToSummaryForm() {
           label="Provedor"
           triggerWidth="w-32"
           contentWidth="w-32"
-          disabled={isLoadingProviders || createJob.isPending}
+          disabled={isLoadingProviders || locked}
           onValueChange={handleProviderChange}
         />
 
@@ -115,7 +136,7 @@ export function VideoToSummaryForm() {
           label="Modelo"
           triggerWidth="w-40"
           contentWidth="w-md"
-          disabled={!providerId || isLoadingModels || createJob.isPending}
+          disabled={!providerId || isLoadingModels || locked}
           onValueChange={handleModelChange}
         />
 
@@ -126,7 +147,7 @@ export function VideoToSummaryForm() {
           label="Thinking"
           triggerWidth="w-32"
           contentWidth="w-40"
-          disabled={!modelId || isLoadingThinking || createJob.isPending}
+          disabled={!modelId || isLoadingThinking || locked}
           onValueChange={handleThinkingChange}
         />
       </div>
@@ -139,7 +160,7 @@ export function VideoToSummaryForm() {
           label="Nível de detalhe"
           triggerWidth="w-48"
           contentWidth="w-52"
-          disabled={createJob.isPending}
+          disabled={locked}
           onValueChange={(value) =>
             setDetail(isSummaryDetail(value) ? value : DEFAULT_SUMMARY_DETAIL)
           }
@@ -162,7 +183,7 @@ export function VideoToSummaryForm() {
         onCategoryChange={setCategory}
         tags={tags}
         onTagsChange={setTags}
-        disabled={createJob.isPending}
+        disabled={locked}
       />
 
       {createJob.isError && (
@@ -175,11 +196,7 @@ export function VideoToSummaryForm() {
         <Button
           type="submit"
           disabled={
-            !url.trim() ||
-            !providerId ||
-            !modelId ||
-            !thinkingId ||
-            createJob.isPending
+            !url.trim() || !providerId || !modelId || !thinkingId || locked
           }
         >
           {createJob.isPending && <Loader2 className="animate-spin" />}

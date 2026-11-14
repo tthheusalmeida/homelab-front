@@ -28,8 +28,8 @@ export function JobDocumentFields({
       className="space-y-4 rounded-md border border-dashed p-4"
     >
       <p className="text-sm text-muted-foreground">
-        Opcional. O que você preencher já vem pronto quando a página aparecer
-        na Entrada; dá para ajustar na hora de adicionar à biblioteca.
+        Opcional. O que você preencher já vem pronto quando a página aparecer na
+        Entrada; dá para ajustar na hora de adicionar à biblioteca.
       </p>
 
       <DocumentFields

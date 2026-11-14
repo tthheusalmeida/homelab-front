@@ -10,9 +10,9 @@ describe("buildDocumentHints", () => {
   });
 
   it("when the title is only spaces, should leave it out", () => {
-    expect(buildDocumentHints({ title: "   ", category: [], tags: [] })).toEqual(
-      {},
-    );
+    expect(
+      buildDocumentHints({ title: "   ", category: [], tags: [] }),
+    ).toEqual({});
   });
 
   it("when the title has spaces around, should send it trimmed", () => {
