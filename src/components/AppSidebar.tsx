@@ -1,7 +1,10 @@
 import {
+  FilePlus,
   Gauge,
   Home,
+  Inbox,
   LayersPlus,
+  Library,
   MessageSquare,
   StepForward,
 } from "lucide-react";
@@ -27,6 +30,26 @@ const navigation = [
         title: "Início",
         url: "/",
         icon: Home,
+      },
+    ],
+  },
+  {
+    label: "Biblioteca",
+    items: [
+      {
+        title: "Acervo",
+        url: "/library",
+        icon: Library,
+      },
+      {
+        title: "Entrada",
+        url: "/library/inbox",
+        icon: Inbox,
+      },
+      {
+        title: "Novo artigo",
+        url: "/library/new",
+        icon: FilePlus,
       },
     ],
   },

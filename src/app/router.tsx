@@ -7,6 +7,11 @@ import { HomePage } from "../pages/home/HomePage";
 import { ChatPage } from "../pages/ai/chat/ChatPage";
 import { UsagePage } from "../pages/ai/usage/UsagePage";
 
+import { LibraryPage } from "../pages/library/LibraryPage";
+import { InboxPage } from "../pages/library/InboxPage";
+import { NewArticlePage } from "../pages/library/NewArticlePage";
+import { DocumentPage } from "../pages/library/DocumentPage";
+
 import { CreatePage } from "../pages/jobs/create/CreatePage";
 import { TrackPage } from "../pages/jobs/track/TrackPage";
 
@@ -18,6 +23,27 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "library",
+        children: [
+          {
+            index: true,
+            element: <LibraryPage />,
+          },
+          {
+            path: "inbox",
+            element: <InboxPage />,
+          },
+          {
+            path: "new",
+            element: <NewArticlePage />,
+          },
+          {
+            path: ":id",
+            element: <DocumentPage />,
+          },
+        ],
       },
       {
         path: "ai",
