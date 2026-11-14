@@ -75,3 +75,34 @@ describe("MarkdownMessage — heading ids and the summary", () => {
     expect(rendered).toEqual(extractHeadings(markdown).map(({ id }) => id));
   });
 });
+
+describe("MarkdownMessage — idPrefix", () => {
+  it("when idPrefix is set, should prefix every heading id", () => {
+    render(
+      <MarkdownMessage content={"# Docker\n\n## Imagens"} headingIds idPrefix="d1" />,
+    );
+
+    expect(screen.getByRole("heading", { name: "Docker" })).toHaveAttribute(
+      "id",
+      "d1-docker",
+    );
+    expect(screen.getByRole("heading", { name: "Imagens" })).toHaveAttribute(
+      "id",
+      "d1-imagens",
+    );
+  });
+
+  it("when two texts use different prefixes, should not repeat ids", () => {
+    render(
+      <>
+        <MarkdownMessage content="# Intro" headingIds idPrefix="a" />
+        <MarkdownMessage content="# Intro" headingIds idPrefix="b" />
+      </>,
+    );
+
+    expect(screen.getAllByRole("heading").map((h) => h.id)).toEqual([
+      "a-intro",
+      "b-intro",
+    ]);
+  });
+});

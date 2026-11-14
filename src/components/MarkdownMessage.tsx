@@ -9,6 +9,11 @@ interface MarkdownMessageProps {
   content: string;
   /** Dá um `id` a cada título, para âncoras e índice (ex.: página do documento). */
   headingIds?: boolean;
+  /**
+   * Prefixo dos ids (`<prefixo>-<id>`), para vários textos na mesma página sem
+   * repetir id (ex.: capítulos de um livro). Só vale com `headingIds`.
+   */
+  idPrefix?: string;
 }
 
 // Links abrem em nova aba sem vazar o referrer; imagens (por URL) nunca
@@ -46,16 +51,16 @@ type HeadingProps = {
 };
 
 /** Títulos com id, vindo do mapa linha → id calculado como o do sumário. */
-function withHeadingIds(ids: Map<number, string>): Components {
+function withHeadingIds(ids: Map<number, string>, prefix?: string): Components {
   const heading =
     (Tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6") =>
     ({ node, children, ...props }: HeadingProps) => (
       <Tag
         {...props}
-        id={
+        id={`${prefix ? `${prefix}-` : ""}${
           ids.get(node?.position?.start.line ?? -1) ??
           slugifyHeading(textOf(children))
-        }
+        }`}
       >
         {children}
       </Tag>
@@ -72,10 +77,17 @@ function withHeadingIds(ids: Map<number, string>): Components {
   };
 }
 
-export function MarkdownMessage({ content, headingIds }: MarkdownMessageProps) {
+export function MarkdownMessage({
+  content,
+  headingIds,
+  idPrefix,
+}: MarkdownMessageProps) {
   const mapping = useMemo(
-    () => (headingIds ? withHeadingIds(headingIdsByLine(content)) : components),
-    [content, headingIds],
+    () =>
+      headingIds
+        ? withHeadingIds(headingIdsByLine(content), idPrefix)
+        : components,
+    [content, headingIds, idPrefix],
   );
 
   return (
